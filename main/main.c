@@ -13,8 +13,6 @@
 #include "minishell.h"
 
 int main() {
-    printf("Singal yazdım işte dümenden");
-    printf("dev de ikinci değişiklik");
-    printf("dev de üçüncü değişiklik");
+    printf("Tesstte");
     return 0;
 }

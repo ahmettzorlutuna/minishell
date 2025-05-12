@@ -14,5 +14,6 @@
 
 int main() {
     printf("Singal yazdım işte dümenden");
+    printf("dev de ikinci değişiklik");
     return 0;
 }

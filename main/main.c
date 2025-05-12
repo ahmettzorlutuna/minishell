@@ -13,6 +13,6 @@
 #include "minishell.h"
 
 int main() {
-
+    printf("Testtir lo");
     return 0;
 }

@@ -13,6 +13,6 @@
 #include "minishell.h"
 
 int main() {
-    printf("Testtir lo");
+    printf("Singal yazdım işte dümenden");
     return 0;
 }

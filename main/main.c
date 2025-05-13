@@ -12,44 +12,36 @@
 
 #include "../include/minishell.h"
 
-void check_type(const char *path)
-{
-    struct stat sb;
-    if(stat(path, &sb) == -1)
-    {
-        perror("stat");
-        return;
-    }
-    else
-    {
-        if(S_ISDIR(sb.st_mode))
-            printf("%s bu bir klasör\n", path);
-        else if(S_ISREG(sb.st_mode))
-            printf("%s bu bir dosya\n", path);
-        else if(S_ISLNK(sb.st_mode))
-            printf("%s bu bir link\n", path);
-    }
-}
-
 int main(int argc, char **argv, char **envp)
 {
     (void)argc;
     (void)argv;
 
+    DIR *dir;
+    struct dirent *entry;
+
+    int slot = ttyslot();
+    if (slot == -1) {
+        perror("ttyslot");
+    } else {
+        printf("Bu terminalin utmp slot numarası: %d\n", slot);
+    }
+    return 0;
+    if (dir == NULL)
+    {
+        perror("opendir");
+        return 1;
+    }
+    while ((entry = readdir(dir)) != NULL)
+    {
+        printf("type...: %d | no...: %ld | name...: %s\n", entry->d_type ,entry->d_ino, entry->d_name);
+    }
+    closedir(dir);
+    
     char *rl;
-    char *pwd;
-    check_type("/home/parallels/Desktop/minishell/main/file.txt");
-    check_type("/home/parallels/Desktop/minishell/main");
     while(1)
     {
         rl = readline("bash$ ");
-        pwd = getcwd(NULL, 0);
-        if (pwd == NULL)
-        {
-            perror("getcwd");
-            free(rl);
-            continue;
-        }
         if (rl == NULL)
         {
             printf("exit\n");
@@ -57,10 +49,6 @@ int main(int argc, char **argv, char **envp)
         }
         if (*rl)
             add_history(rl);
-        printf("Before chdir the path is : %s\n", pwd);
-        chdir("/home/parallels/Desktop");
-        pwd = getcwd(NULL, 0);
-        check_type(pwd);
         printf("Input: %s\n", rl);
         free(rl);
     }

@@ -10,17 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifdef MINISHELL_H
+#ifndef MINISHELL_H
 # define MINISHELL_H
 
 # include <stdio.h>
-# include <readline/readline.h>
 # include <readline/history.h>
-# include <stdbool.h>
-# include <fcntl.h>
-# include <sys/wait.h>
-# include <signal.h>
-# include "./lib/libft.h"
-# include "tokenerizer.h"
+# include <readline/readline.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <sys/stat.h> //stat(), fstat(), lstat()
+# include <dirent.h> //opendir(), readdir(), closedir()
 
 #endif

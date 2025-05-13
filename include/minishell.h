@@ -20,5 +20,7 @@
 # include <unistd.h>
 # include <sys/stat.h> //stat(), fstat(), lstat()
 # include <dirent.h> //opendir(), readdir(), closedir()
+# include <string.h> //strerror()
+# include <fcntl.h> //open(), O_RDONLY
 
 #endif

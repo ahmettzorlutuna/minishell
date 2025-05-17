@@ -31,6 +31,7 @@ SRC = 	main/main.c \
 		env/env.c \
 		parser/parser.c \
 		tokenizer/tokenizer.c \
+		utils/handle_signals.c \
 
 SRCS	= $(addprefix $(SRC_PATH), $(SRC))
 OBJ 	= $(SRC:.c=.o)

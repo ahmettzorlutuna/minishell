@@ -12,24 +12,25 @@
 
 #include "../includes/minishell.h"
 
-int main(int argc, char **argv, char **envp)
+volatile sig_atomic_t	g_signal_flag = 0;
+
+int	main(int argc, char **argv, char **envp)
 {
+	t_minishell	*minishell;
+
 	(void)argc;
 	(void)argv;
 	(void)envp;
-
-	t_minishell *minishell;
-
+	init_signal_handler();
 	minishell = (t_minishell *)malloc(sizeof(t_minishell));
 	if (!minishell)
 		return (ft_putstr_fd("Error: Memory allocation failed\n",
-				2),EXIT_FAILURE);
-	if(argc != 1)
+				2), EXIT_FAILURE);
+	if (argc != 1)
 	{
 		perror("No arguments expected for minishell");
 		free(minishell);
 		exit(2);
 	}
-
-    return 0;
+	return (0);
 }

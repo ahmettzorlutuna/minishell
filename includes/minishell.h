@@ -27,55 +27,14 @@
 #include <curses.h> // for tgetent(), tgetstr(), tputs()
 #include <term.h> // for tgetent(), tgetstr(), tputs()
 
-//* ************************************************************************** */
-//* Structures
-//* ************************************************************************** */
-
-typedef struct s_minishell
-{
-    char **envp; // Çevresel değişkenler
-    char *input; // Kullanıcıdan alınan girdi
-	int last_exit_code; // Son çıkış kodu $?
-} t_minishell;
-
-typedef struct s_token
-{
-	t_token_type	type; // Token türü (örneğin: TOKEN_WORD, TOKEN_REDIRECT_IN, vb.)
-	char			*value; // Tokenin değeri (örneğin: "hello", ">", "<", "|", vb.)
-	struct s_token	*next; // Sonraki tokeni işaret eder
-    struct s_token	*prev; // Önceki tokeni işaret eder
-}	t_token;
-
-typedef struct s_redirection
-{
-    t_token_type type;  // Yönlendirme türü (in, out, append, vb.)
-    char *file;         // Yönlendirilen dosya adı
-    struct s_redirection *next; // Birden fazla yönlendirme olabilir
-} t_redirection;
-
-typedef struct s_command
-{
-    char *cmd;             // Komut adı (örneğin: echo, pwd, cd, vb.)
-    char **args;           // Komutun argümanları (örneğin: ["-n", "Hello"])
-    t_redirection *redir;  // Yönlendirmeler (input, output, append, vb.)
-    struct s_command *next; // Birden fazla komut için linked list
-} t_command;
-
-typedef struct s_env
-{
-	char	*key;   // Örn: "PATH"
-	char	*value; // Örn: "/usr/bin:/bin"
-	struct s_env *next;
-}	t_env;
-
+#include "../libft/libft.h"
 
 //* ************************************************************************** */
 //* Enums
 //* ************************************************************************** */
 typedef enum e_token_type
 {
-	TOKEN_WORD,         // ahmet, foo, "merhaba"
-    TOKEN_CMD,          // Komutlar (örneğin: echo, cd, pwd)
+	TOKEN_WORD,         // Kelime (örneğin: "hello", "world")
 	TOKEN_REDIRECT_IN,  // <
 	TOKEN_REDIRECT_OUT, // >
 	TOKEN_HEREDOC,      // <<
@@ -90,5 +49,50 @@ typedef enum e_quote_type
     SINGLE_QUOTE,
     DOUBLE_QUOTE
 }	t_quote_type;
+
+//* ************************************************************************** */
+//* Structures
+//* ************************************************************************** */
+
+typedef struct s_token
+{
+	t_token_type	type; // Token türü (örneğin: TOKEN_WORD, TOKEN_REDIRECT_IN, vb.)
+	char			*value; // Tokenin değeri (örneğin: "hello", ">", "<", "|", vb.)
+	struct s_token	*next; // Sonraki tokeni işaret eder
+}	t_token;
+
+typedef struct s_redir
+{
+    t_token_type type;  // Yönlendirme türü (in, out, append, vb.)
+    char *file;         // Yönlendirilen dosya adı
+    struct s_redir *next; // Birden fazla yönlendirme olabilir
+} t_redirection;
+
+typedef struct s_cmd
+{
+    char *cmd;             // Komut adı
+    char **args;           // Komutun argümanları (null-terminated)
+    t_redirection *redir;  // Yönlendirmeler
+    char *heredoc_content; // Heredoc içeriği (veya geçici dosya adı)
+    char *heredoc_delimiter; // Heredoc sınırlayıcısı
+    int pipe_in_fd;       // Önceki komuttan okuma için pipe FD
+    int pipe_out_fd;      // Sonraki komuta yazma için pipe FD
+    struct s_cmd *next;   // Boru hattındaki sonraki komut
+} t_command;
+
+typedef struct s_env
+{
+	char	*key;   // Örn: "PATH"
+	char	*value; // Örn: "/usr/bin:/bin"
+	struct s_env *next;
+}	t_env;
+
+typedef struct s_minishell
+{
+    char *input; // Kullanıcıdan alınan girdi
+    t_env *env_list; // Çevresel değişkenler
+	int last_exit_code; // Son çıkış kodu $?
+    int number_of_prompts; // Kaç tane prompt gösterildi
+} t_minishell;
 
 #endif

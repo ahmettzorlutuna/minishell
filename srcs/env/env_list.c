@@ -46,7 +46,7 @@ void	set_env_value(t_env **env_list, const char *key, const char *value)
 	tmp = *env_list;
 	while (tmp)
 	{
-		if (ft_strcmp(tmp->key, key) == 0)
+		if (tmp->key && ft_strcmp(tmp->key, key) == 0)
 		{
 			free(tmp->value);
 			tmp->value = ft_strdup(value);

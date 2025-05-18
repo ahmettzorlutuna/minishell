@@ -12,20 +12,6 @@
 
 #include "../includes/minishell.h"
 
-void	free_env_array(char **env_array)
-{
-	int	i = 0;
-
-	if (!env_array)
-		return;
-	while (env_array[i])
-	{
-		free(env_array[i]);
-		i++;
-	}
-	free(env_array);
-}
-
 void	update_env_array(t_minishell *minishell)
 {
 	if (!minishell)

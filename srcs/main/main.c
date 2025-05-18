@@ -18,9 +18,8 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*minishell;
 
-	(void)argc;
 	(void)argv;
-	(void)envp;
+
 	init_signal_handler();
 	minishell = (t_minishell *)malloc(sizeof(t_minishell));
 	if (!minishell)
@@ -32,5 +31,6 @@ int	main(int argc, char **argv, char **envp)
 		free(minishell);
 		exit(2);
 	}
+	init_minishell(minishell,envp);
 	return (0);
 }

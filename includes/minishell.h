@@ -114,5 +114,8 @@ void	unset_env_value(t_env **env_list, const char *key);
 char	**env_list_to_array(t_env *env_list);
 void	free_env_array(char **env_array);
 void	update_env_array(t_minishell *mini);
+void	free_env_list(t_env *env_list);
+void	free_env_array(char **env_array);
+void	exit_minishell(t_minishell *minishell);
 
 #endif

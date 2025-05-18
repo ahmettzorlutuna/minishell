@@ -14,6 +14,20 @@
 
 volatile sig_atomic_t	g_signal_flag = 0;
 
+static void shell_loop(t_minishell *minishell)
+{
+	while (1)
+	{
+		minishell->input = readline("minishell> ");
+		if (minishell->input == NULL)
+		{
+			ft_putstr_fd("exit\n", 0);
+			exit_minishell(minishell);
+		}
+		free(minishell->input);
+	}
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*minishell;
@@ -31,6 +45,10 @@ int	main(int argc, char **argv, char **envp)
 		free(minishell);
 		exit(2);
 	}
+	set_env_value(&minishell->env_list, "d1", "1");
+	set_env_value(&minishell->env_list, "d2", "2");
+	set_env_value(&minishell->env_list, "d2", "5");
 	init_minishell(minishell,envp);
+	shell_loop(minishell);
 	return (0);
 }

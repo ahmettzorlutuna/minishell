@@ -20,9 +20,7 @@ SRC_PATH = ./srcs/
 INC_PATH = ./includes/
 OBJ_PATH = ./objs/
 
-SRC = 	main/main.c \
-		main/init_minishell.c \
-		builtins/cd.c \
+SRC	=	builtins/cd.c \
 		builtins/echo.c \
 		builtins/env.c \
 		builtins/exit.c \
@@ -31,6 +29,9 @@ SRC = 	main/main.c \
 		builtins/unset.c \
 		env/env_array.c \
 		env/env_list.c \
+		env/free_env.c \
+		main/main.c \
+		main/minishell.c \
 		parser/parser.c \
 		tokenizer/tokenizer.c \
 		utils/handle_signals.c \

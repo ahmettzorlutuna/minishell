@@ -11,26 +11,26 @@
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
-#define MINISHELL_H
+# define MINISHELL_H
 
-#include <stdio.h>
-#include <readline/history.h>
-#include <readline/readline.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/stat.h>  //stat(), fstat(), lstat()
-#include <dirent.h>	   //opendir(), readdir(), closedir()
-#include <string.h>	   //strerror()
-#include <fcntl.h>	   //open(), O_RDONLY
-#include <sys/ioctl.h> //ioctl()
-#include <signal.h>	   //signal()
+# include <stdio.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <sys/stat.h>  //stat(), fstat(), lstat()
+# include <dirent.h>	   //opendir(), readdir(), closedir()
+# include <string.h>	   //strerror()
+# include <fcntl.h>	   //open(), O_RDONLY
+# include <sys/ioctl.h> //ioctl()
+# include <signal.h>	   //signal()
 
-#include <curses.h> // for tgetent(), tgetstr(), tputs()
-#include <term.h>	// for tgetent(), tgetstr(), tputs()
+# include <curses.h> // for tgetent(), tgetstr(), tputs()
+# include <term.h>	// for tgetent(), tgetstr(), tputs()
 
-#include "../libft/libft.h"
+# include "../libft/libft.h"
 
-extern volatile sig_atomic_t g_signal_flag;
+extern	volatile	sig_atomic_t g_signal_flag;
 
 //* ************************************************************************** */
 //* Enums
@@ -71,7 +71,7 @@ typedef struct s_redir
 	struct s_redir *next; // Birden fazla yönlendirme olabilir
 } t_redirection;
 
-typedef struct s_cmd
+typedef	struct	s_cmd
 {
 	char *cmd;				 // Komut adı
 	char **args;			 // Komutun argümanları (null-terminated)
@@ -83,21 +83,36 @@ typedef struct s_cmd
 	struct s_cmd *next;		 // Boru hattındaki sonraki komut
 } t_command;
 
-typedef struct s_env
+typedef	struct	s_env
 {
 	char *key;	 // Örn: "PATH"
 	char *value; // Örn: "/usr/bin:/bin"
 	struct s_env *next;
 } t_env;
 
-typedef struct s_minishell
+typedef	struct	s_minishell
 {
 	char *input;		   // Kullanıcıdan alınan girdi
-	t_env *env_list;	   // Çevresel değişkenler
+	t_env *env_list;	   // Çevresel değişkenler (linked list)
+	char **env_array;	   // Çevresel değişkenler (array hali execve çalıştırmak için dizi formatında vercez)
 	int last_exit_code;	   // Son çıkış kodu $?
 	int number_of_prompts; // Kaç tane prompt gösterildi
 } t_minishell;
 
-void init_signal_handler(void);
+/*	Minishell */
+void	init_minishell(t_minishell *minishell, char **envp);
+// void	free_minishell(t_minishell *minishell);
+
+/*	signal */
+void	init_signal_handler(void);
+
+/*	Environments	*/
+t_env	*init_env_list(char **envp);
+char	*get_env_value(t_env *env_list, const char *key);
+void 	set_env_value(t_env **env_list, const char *key, const char *value);
+void	unset_env_value(t_env **env_list, const char *key);
+char	**env_list_to_array(t_env *env_list);
+void	free_env_array(char **env_array);
+void	update_env_array(t_minishell *mini);
 
 #endif

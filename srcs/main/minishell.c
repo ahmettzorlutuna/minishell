@@ -16,7 +16,8 @@ void	exit_minishell(t_minishell *minishell)
 {
 	free_env_list(minishell->env_list);
 	free_env_array(minishell->env_array);
-	// Diğer free'ler: history, lexer, parser, vs.
+	free(minishell->input);
+	free(minishell);
 	exit(0);
 }
 

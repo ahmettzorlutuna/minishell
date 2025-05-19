@@ -30,10 +30,13 @@ SRC	=	builtins/cd.c \
 		env/env_array.c \
 		env/env_list.c \
 		env/free_env.c \
+		lexer/lexer.c \
+		lexer/token_utils.c \
+		lexer/tokenizer.c \
 		main/main.c \
 		main/minishell.c \
 		parser/parser.c \
-		tokenizer/tokenizer.c \
+		test/test_utils.c \
 		utils/handle_signals.c \
 
 SRCS	= $(addprefix $(SRC_PATH), $(SRC))

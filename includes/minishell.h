@@ -60,6 +60,7 @@ typedef enum e_quote_type
 typedef struct s_token
 {
 	t_token_type type;	  // Token türü (örneğin: TOKEN_WORD, TOKEN_REDIRECT_IN, vb.)
+	t_quote_type quote; // Alıntı türü (örneğin: NO_QUOTE, SINGLE_QUOTE, DOUBLE_QUOTE)
 	char *value;		  // Tokenin değeri (örneğin: "hello", ">", "<", "|", vb.)
 	struct s_token *next; // Sonraki tokeni işaret eder
 } t_token;
@@ -94,14 +95,15 @@ typedef	struct	s_minishell
 {
 	char *input;		   // Kullanıcıdan alınan girdi
 	t_env *env_list;	   // Çevresel değişkenler (linked list)
+	t_token *tokens;	   // Tokenler (linked list)
 	char **env_array;	   // Çevresel değişkenler (array hali execve çalıştırmak için dizi formatında vercez)
 	int last_exit_code;	   // Son çıkış kodu $?
 	int number_of_prompts; // Kaç tane prompt gösterildi
 } t_minishell;
 
 /*	Minishell */
-void	init_minishell(t_minishell *minishell, char **envp);
-// void	free_minishell(t_minishell *minishell);
+void	init_mini_data(t_minishell *minishell, char **envp);
+void	init_minishell(t_minishell *minishell);
 
 /*	signal */
 void	init_signal_handler(void);
@@ -117,5 +119,15 @@ void	update_env_array(t_minishell *mini);
 void	free_env_list(t_env *env_list);
 void	free_env_array(char **env_array);
 void	exit_minishell(t_minishell *minishell);
+
+/*      Lexer      */
+t_token *lexer(char *input);
+t_token *tokenizer(char *input);
+t_token	*create_token(t_token_type type, char *value);
+void	add_token(t_token **head, t_token *new_token);
+void	free_token_list(t_token *head);
+
+/*	Test functions	*/
+void print_tokens(t_token *tokens);
 
 #endif

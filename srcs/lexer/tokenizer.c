@@ -41,12 +41,12 @@ static t_token_type get_operator_type(const char *input, int *i)
 {
     if(input[*i] == '<' && input[*i + 1] == '<')
     {
-        i++;
+        (*i)++;
         return (TOKEN_HEREDOC);
     }
     if(input[*i] == '>' && input[*i + 1] == '>')
     {
-        i++;
+        (*i)++;
         return (TOKEN_APPEND);
     }
     if(input[*i] == '<')

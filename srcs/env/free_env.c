@@ -19,10 +19,12 @@ void	free_env_list(t_env *env_list)
 	while (env_list)
 	{
 		tmp = env_list;
-		free(tmp->key);
-		free(tmp->value);
-		free(tmp);
 		env_list = env_list->next;
+		if(tmp->key)
+			free(tmp->key);
+		if(tmp->value)
+			free(tmp->value);
+		free(tmp);
 	}
 }
 

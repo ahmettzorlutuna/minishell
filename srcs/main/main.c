@@ -24,6 +24,11 @@ static void shell_loop(t_minishell *minishell)
 			ft_putstr_fd("exit\n", 0);
 			exit_minishell(minishell);
 		}
+		if(minishell->input && *minishell->input)
+		{
+			init_minishell(minishell);
+			print_tokens(minishell->tokens);
+		}
 	}
 }
 
@@ -44,8 +49,7 @@ int	main(int argc, char **argv, char **envp)
 		free(minishell);
 		exit(2);
 	}
-	init_minishell(minishell,envp);
-	set_env_value(&minishell->env_list, "a3", "3");
+	init_mini_data(minishell,envp);
 	shell_loop(minishell);
 	exit_minishell(minishell);
 	return (0);

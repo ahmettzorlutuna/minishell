@@ -21,11 +21,17 @@ void	exit_minishell(t_minishell *minishell)
 	exit(0);
 }
 
-void	init_minishell(t_minishell *minishell, char **envp)
+void	init_mini_data(t_minishell *minishell, char **envp)
 {
 	minishell->input = NULL;
 	minishell->env_list = init_env_list(envp);
 	minishell->env_array = env_list_to_array(minishell->env_list);
 	minishell->last_exit_code = 0;
 	minishell->number_of_prompts = 0;
+}
+
+void init_minishell(t_minishell *minishell)
+{
+	add_history(minishell->input);
+	lexer(minishell->input);
 }

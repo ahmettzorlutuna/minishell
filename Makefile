@@ -37,7 +37,7 @@ SRC	=	builtins/cd.c \
 		main/minishell.c \
 		parser/parser.c \
 		test/test_utils.c \
-		utils/handle_signals.c \
+		utils/handle_signals.c
 
 SRCS	= $(addprefix $(SRC_PATH), $(SRC))
 OBJ 	= $(SRC:.c=.o)
@@ -56,6 +56,8 @@ $(OBJ_PATH):
 	mkdir -p $(OBJ_PATH)/main
 	mkdir -p $(OBJ_PATH)/parser
 	mkdir -p $(OBJ_PATH)/tokenizer
+	mkdir -p $(OBJ_PATH)/test
+	mkdir -p $(OBJ_PATH)/lexer
 	mkdir -p $(OBJ_PATH)/utils
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c

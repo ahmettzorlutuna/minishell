@@ -121,13 +121,13 @@ void	free_env_array(char **env_array);
 void	exit_minishell(t_minishell *minishell);
 
 /*      Lexer      */
-t_token *lexer(char *input);
+int		lexer(t_token *tokens);
 t_token *tokenizer(char *input);
 t_token	*create_token(t_token_type type, char *value);
 void	add_token(t_token **head, t_token *new_token);
 void	free_token_list(t_token *head);
 
 /*	Test functions	*/
-void print_tokens(t_token *tokens);
+void	print_tokens(t_token *tokens);
 
 #endif

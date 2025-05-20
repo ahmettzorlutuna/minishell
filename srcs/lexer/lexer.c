@@ -12,7 +12,24 @@
 
 #include "../includes/minishell.h"
 
-t_token *lexer(char *input)
-{
-    return (tokenizer(input));
-}
+// int lexer(t_token *tokens)
+// {
+//     // t_token *curr = tokens;
+
+//     // while (curr && curr->type != TOKEN_EOF)
+//     // {
+//     //     if (curr->type == TOKEN_PIPE)
+//     //     {
+//     //         if (!curr->next || curr->next->type == TOKEN_PIPE)
+//     //             return error_msg("syntax error near unexpected token `|`");
+//     //     }
+//     //     else if (curr->type == TOKEN_REDIRECT_IN || curr->type == TOKEN_REDIRECT_OUT ||
+//     //              curr->type == TOKEN_APPEND || curr->type == TOKEN_HEREDOC)
+//     //     {
+//     //         if (!curr->next || curr->next->type != TOKEN_WORD)
+//     //             return error_msg("syntax error near redirect");
+//     //     }
+//     //     curr = curr->next;
+//     // }
+//     // return 0;
+// }

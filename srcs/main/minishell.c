@@ -18,12 +18,14 @@ void	exit_minishell(t_minishell *minishell)
 	free_env_array(minishell->env_array);
 	free(minishell->input);
 	free(minishell);
+	free(minishell->tokens);
 	exit(0);
 }
 
 void	init_mini_data(t_minishell *minishell, char **envp)
 {
 	minishell->input = NULL;
+	minishell->tokens = NULL;
 	minishell->env_list = init_env_list(envp);
 	minishell->env_array = env_list_to_array(minishell->env_list);
 	minishell->last_exit_code = 0;
@@ -33,5 +35,5 @@ void	init_mini_data(t_minishell *minishell, char **envp)
 void init_minishell(t_minishell *minishell)
 {
 	add_history(minishell->input);
-	lexer(minishell->input);
+	minishell->tokens = tokenizer(minishell->input);
 }

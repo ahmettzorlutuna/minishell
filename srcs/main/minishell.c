@@ -16,9 +16,9 @@ void	exit_minishell(t_minishell *minishell)
 {
 	free_env_list(minishell->env_list);
 	free_env_array(minishell->env_array);
+	free_token_list(minishell->tokens);
 	free(minishell->input);
 	free(minishell);
-	free(minishell->tokens);
 	exit(0);
 }
 
@@ -36,4 +36,5 @@ void init_minishell(t_minishell *minishell)
 {
 	add_history(minishell->input);
 	minishell->tokens = tokenizer(minishell->input);
+	expand_tokens(minishell->tokens, minishell->env_list);
 }

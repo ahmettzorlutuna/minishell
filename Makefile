@@ -30,9 +30,12 @@ SRC	=	builtins/cd.c \
 		env/env_array.c \
 		env/env_list.c \
 		env/free_env.c \
-		lexer/lexer.c \
-		lexer/token_utils.c \
-		lexer/tokenizer.c \
+		expander/expander.c \
+		expander/expander_utils.c \
+		tokenizer/free_tokenizer.c \
+		tokenizer/token_list.c \
+		tokenizer/token_utils.c \
+		tokenizer/tokenizer.c \
 		main/main.c \
 		main/minishell.c \
 		parser/parser.c \
@@ -53,6 +56,7 @@ $(OBJ_PATH):
 	mkdir -p $(OBJ_PATH)
 	mkdir -p $(OBJ_PATH)/builtins
 	mkdir -p $(OBJ_PATH)/env
+	mkdir -p $(OBJ_PATH)/expander
 	mkdir -p $(OBJ_PATH)/main
 	mkdir -p $(OBJ_PATH)/parser
 	mkdir -p $(OBJ_PATH)/tokenizer

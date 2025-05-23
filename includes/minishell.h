@@ -120,12 +120,20 @@ void	free_env_list(t_env *env_list);
 void	free_env_array(char **env_array);
 void	exit_minishell(t_minishell *minishell);
 
-/*      Lexer      */
-int		lexer(t_token *tokens);
-t_token *tokenizer(char *input);
-t_token	*create_token(t_token_type type, char *value);
-void	add_token(t_token **head, t_token *new_token);
-void	free_token_list(t_token *head);
+/*      Tokenizer      */
+t_token			*tokenizer(char *input);
+t_token			*create_token(t_token_type type, char *value);
+void			add_token(t_token **head, t_token *new_token);
+void			free_token_list(t_token *head);
+int				is_whitespace(char c);
+int				is_operator(char c);
+char			*get_word(const char *input, int *i);
+t_token_type	get_operator_type(const char *input);
+int				get_token_len(t_token_type type);
+
+/*  Expander  */
+char *ft_strjoin_free(char *s1, char *s2);
+void expand_tokens(t_token *token_list, t_env *env_list);
 
 /*	Test functions	*/
 void	print_tokens(t_token *tokens);

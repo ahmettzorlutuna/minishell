@@ -27,7 +27,6 @@ static void shell_loop(t_minishell *minishell)
 		if(minishell->input && *minishell->input)
 		{
 			init_minishell(minishell);
-			print_tokens(minishell->tokens);
 		}
 	}
 }

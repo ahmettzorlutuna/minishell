@@ -57,6 +57,12 @@ typedef enum e_quote_type
 //* Structures
 //* ************************************************************************** */
 
+typedef struct s_word_info
+{
+	char *value;
+	t_quote_type quote;
+} t_word_info;
+
 typedef struct s_token
 {
 	t_token_type type;	  // Token türü (örneğin: TOKEN_WORD, TOKEN_REDIRECT_IN, vb.)
@@ -122,7 +128,7 @@ void	exit_minishell(t_minishell *minishell);
 
 /*      Tokenizer      */
 t_token			*tokenizer(char *input);
-t_token			*create_token(t_token_type type, char *value);
+t_token	*create_token(t_token_type type, char *value, t_quote_type quote);
 void			add_token(t_token **head, t_token *new_token);
 void			free_token_list(t_token *head);
 int				is_whitespace(char c);

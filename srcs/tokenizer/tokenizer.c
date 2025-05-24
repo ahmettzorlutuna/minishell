@@ -12,49 +12,41 @@
 
 #include "../includes/minishell.h"
 
-static char *get_word_with_quotes(const char *input, int *i)
+static t_word_info get_word_with_quotes(const char *input, int *i)
 {
+	t_word_info info;
 	int start, len;
-	char quote;
-	char *quoted_part;
-	char *rest_part;
-	char *final_word;
+	char quote_char;
 
-	len = 0;
-	quote = input[*i];
+	quote_char = input[*i];
+	info.quote = (quote_char == '\'') ? SINGLE_QUOTE : DOUBLE_QUOTE;
 
-	(*i)++; // açılış tırnağını geç
+	(*i)++;
 	start = *i;
-	while (input[*i] && input[*i] != quote)
+	len = 0;
+
+	while (input[*i] && input[*i] != quote_char)
 	{
 		(*i)++;
 		len++;
 	}
+
 	if (!input[*i])
 	{
 		ft_putstr_fd("syntax error: unexpected EOF while looking for matching quote\n", 2);
-		return (NULL);
+		info.value = NULL;
+		return info;
 	}
-	quoted_part = ft_substr(input, start, len); // örn: ahmet
-	(*i)++;										// kapanış tırnağını geç
-	start = *i;
-	len = 0;
-	while (input[*i] && !is_whitespace(input[*i]) && !is_operator(input[*i]) && input[*i] != '\'' && input[*i] != '"')
-	{
-		(*i)++;
-		len++;
-	}
-	rest_part = ft_substr(input, start, len); // örn: 123
-	final_word = ft_strjoin(quoted_part, rest_part);
-	free(quoted_part);
-	free(rest_part);
-	return (final_word);
+
+	info.value = ft_substr(input, start, len);
+	(*i)++;
+	return info;
 }
 
-static char *get_combined_token(const char *input, int *i)
+static t_word_info get_combined_token(const char *input, int *i)
 {
-	char *part;
-	char *combined = NULL;
+	t_word_info result = {NULL, NO_QUOTE};
+	t_word_info part;
 	char *temp;
 
 	while (input[*i] && !is_whitespace(input[*i]) && !is_operator(input[*i]))
@@ -62,29 +54,40 @@ static char *get_combined_token(const char *input, int *i)
 		if (input[*i] == '\'' || input[*i] == '"')
 			part = get_word_with_quotes(input, i);
 		else
-			part = get_word(input, i);
-		if (!part)
 		{
-			free(combined);
-			return (NULL);
+			part.value = get_word(input, i);
+			part.quote = NO_QUOTE;
 		}
-		temp = combined;
-		if (!combined)
-			combined = ft_strdup(part);
+
+		if (!part.value)
+		{
+			free(result.value);
+			result.value = NULL;
+			return result;
+		}
+
+		if (!result.value)
+			result.value = ft_strdup(part.value);
 		else
 		{
-			combined = ft_strjoin(combined, part); // birleştir
+			temp = result.value;
+			result.value = ft_strjoin(result.value, part.value);
 			free(temp);
-			free(part);
 		}
+
+		if (result.quote == NO_QUOTE && part.quote != NO_QUOTE)
+			result.quote = part.quote;
+
+		free(part.value);
 	}
-	return (combined);
+	return result;
 }
 
 t_token *tokenizer(char *input)
 {
 	t_token *token_list;
 	t_token *new_token;
+	t_word_info word_info;
 	int i;
 	int len;
 	char *str;
@@ -99,7 +102,7 @@ t_token *tokenizer(char *input)
 		{
 			len = get_token_len(get_operator_type(&input[i]));
 			str = ft_substr(input, i, len);
-			new_token = create_token(get_operator_type(&input[i]), str);
+			new_token = create_token(get_operator_type(&input[i]), str, word_info.quote);
 			if (!new_token)
 				return (NULL);
 			add_token(&token_list, new_token);
@@ -107,15 +110,17 @@ t_token *tokenizer(char *input)
 		}
 		else
 		{
-			str = get_combined_token(input, &i);
+			word_info = get_combined_token(input, &i);
+			if (!word_info.value)
+				return NULL;
 			if (!str)
 				return (NULL);
-			new_token = create_token(TOKEN_WORD, str);
+			t_token *new_token = create_token(TOKEN_WORD, word_info.value, word_info.quote);
 			if (!new_token)
 				return (NULL);
 			add_token(&token_list, new_token);
 		}
 	}
-	add_token(&token_list, create_token(TOKEN_EOF, NULL));
+	add_token(&token_list, create_token(TOKEN_EOF, NULL, word_info.quote));
 	return (token_list);
 }

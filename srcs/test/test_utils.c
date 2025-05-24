@@ -31,13 +31,25 @@ static const char *token_type_str(t_token_type type)
 	return "UNKNOWN";
 }
 
+static const char *quote_type_str(t_quote_type quote)
+{
+	if (quote == NO_QUOTE)
+		return "NO_QUOTE";
+	else if (quote == SINGLE_QUOTE)
+		return "SINGLE_QUOTE";
+	else if (quote == DOUBLE_QUOTE)
+		return "DOUBLE_QUOTE";
+	return "UNKNOWN";
+}
+
 void print_tokens(t_token *tokens)
 {
 	while (tokens)
 	{
-		printf("Token Type: %-16s | Value: %s\n",
+		printf("Token Type: %-16s | Value: %-12s | Quote: %s\n",
 			token_type_str(tokens->type),
-			tokens->value ? tokens->value : "NULL");
+			tokens->value ? tokens->value : "NULL",
+			quote_type_str(tokens->quote));
 		tokens = tokens->next;
 	}
 }

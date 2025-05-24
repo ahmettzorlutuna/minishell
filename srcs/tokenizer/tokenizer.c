@@ -46,13 +46,24 @@ static t_word_info get_combined_token(const char *input, int *i)
 	t_word_info part;
 	char *temp;
 
-	while (input[*i] && !is_whitespace(input[*i]) && !is_operator(input[*i]))
+	while (input[*i])
 	{
+		if (is_whitespace(input[*i]) || is_operator(input[*i]))
+			break;
+
 		if (input[*i] == '\'' || input[*i] == '"')
+		{
 			part = get_word_with_quotes(input, i);
+		}
 		else
 		{
-			part.value = get_word(input, i);
+			int start = *i;
+			while (input[*i] && !is_whitespace(input[*i]) && !is_operator(input[*i]) &&
+				input[*i] != '"' && input[*i] != '\'')
+			{
+				(*i)++;
+			}
+			part.value = ft_substr(input, start, *i - start);
 			part.quote = NO_QUOTE;
 		}
 		if (!part.value)
@@ -69,10 +80,8 @@ static t_word_info get_combined_token(const char *input, int *i)
 			result.value = ft_strjoin(result.value, part.value);
 			free(temp);
 		}
-
 		if (result.quote == NO_QUOTE && part.quote != NO_QUOTE)
 			result.quote = part.quote;
-
 		free(part.value);
 	}
 	return result;

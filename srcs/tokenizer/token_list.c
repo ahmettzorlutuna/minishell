@@ -29,7 +29,7 @@ void add_token(t_token **head, t_token *new_token)
     current->next = new_token;
 }
 
-t_token	*create_token(t_token_type type, char *value)
+t_token	*create_token(t_token_type type, char *value, t_quote_type quote)
 {
     t_token	*new_token;
 
@@ -38,6 +38,7 @@ t_token	*create_token(t_token_type type, char *value)
         return (NULL);
     new_token->type = type;
     new_token->value = value;
+    new_token->quote = quote;
     new_token->next = NULL;
     return (new_token);
 }

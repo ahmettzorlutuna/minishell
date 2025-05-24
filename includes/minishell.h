@@ -57,6 +57,11 @@ typedef enum e_quote_type
 //* Structures
 //* ************************************************************************** */
 
+/*
+TOKENİZER
+Bir kelimeyi/parçayı analiz edip, "hangi quote içinde mi?", "kelime ne?" gibi bilgileri geçici olarak tutar.
+Kelimeyi (ve varsa tırnak bilgisini) doğru şekilde çıkarıp geri döndürmek için
+*/
 typedef struct s_word_info
 {
 	char *value;

@@ -57,6 +57,11 @@ typedef enum e_quote_type
 //* Structures
 //* ************************************************************************** */
 
+/*
+TOKENİZER
+Bir kelimeyi/parçayı analiz edip, "hangi quote içinde mi?", "kelime ne?" gibi bilgileri geçici olarak tutar.
+Kelimeyi (ve varsa tırnak bilgisini) doğru şekilde çıkarıp geri döndürmek için
+*/
 typedef struct s_word_info
 {
 	char *value;
@@ -71,23 +76,26 @@ typedef struct s_token
 	struct s_token *next; // Sonraki tokeni işaret eder
 } t_token;
 
-typedef struct s_redir
+typedef struct s_redirection
 {
 	t_token_type type;	  // Yönlendirme türü (in, out, append, vb.)
-	char *file;			  // Yönlendirilen dosya adı
-	struct s_redir *next; // Birden fazla yönlendirme olabilir
+	char *filename;			  // Yönlendirilen dosya adı
+	struct s_redirection *next; // Birden fazla yönlendirme olabilir
 } t_redirection;
 
-typedef	struct	s_cmd
+typedef	struct	s_command
 {
-	char *cmd;				 // Komut adı
-	char **args;			 // Komutun argümanları (null-terminated)
-	t_redirection *redir;	 // Yönlendirmeler
-	char *heredoc_content;	 // Heredoc içeriği (veya geçici dosya adı)
-	char *heredoc_delimiter; // Heredoc sınırlayıcısı
-	int pipe_in_fd;			 // Önceki komuttan okuma için pipe FD
-	int pipe_out_fd;		 // Sonraki komuta yazma için pipe FD
-	struct s_cmd *next;		 // Boru hattındaki sonraki komut
+	char **args;
+	t_redirection *redirects;
+	struct s_command	*next_pipe;
+	// char *cmd;				 // Komut adı
+	// char **args;			 // Komutun argümanları (null-terminated)
+	// t_redirection *redir;	 // Yönlendirmeler
+	// char *heredoc_content;	 // Heredoc içeriği (veya geçici dosya adı)
+	// char *heredoc_delimiter; // Heredoc sınırlayıcısı
+	// int pipe_in_fd;			 // Önceki komuttan okuma için pipe FD
+	// int pipe_out_fd;		 // Sonraki komuta yazma için pipe FD
+	// struct s_cmd *next;		 // Boru hattındaki sonraki komut
 } t_command;
 
 typedef	struct	s_env
@@ -102,6 +110,7 @@ typedef	struct	s_minishell
 	char *input;		   // Kullanıcıdan alınan girdi
 	t_env *env_list;	   // Çevresel değişkenler (linked list)
 	t_token *tokens;	   // Tokenler (linked list)
+	t_command *command_list; // Komut listesi
 	char **env_array;	   // Çevresel değişkenler (array hali execve çalıştırmak için dizi formatında vercez)
 	int last_exit_code;	   // Son çıkış kodu $?
 	int number_of_prompts; // Kaç tane prompt gösterildi
@@ -141,7 +150,11 @@ int				get_token_len(t_token_type type);
 char *ft_strjoin_free(char *s1, char *s2);
 void expand_tokens(t_token *token_list, t_env *env_list);
 
+/*  Parser  */
+t_command *parse_command(t_token **tokens);
+
 /*	Test functions	*/
 void	print_tokens(t_token *tokens);
+void	print_parsed_command(t_command *cmd);
 
 #endif

@@ -41,7 +41,15 @@ static char *expand_word(char *token_value, t_env *env_list)
 					i++;
 				variable_name = ft_substr(token_value, start, i - start);
 				variable_value = get_env_value(env_list, variable_name);
-				if(!variable_value)
+				// Eğer variable bulunamazsa, geri dönüp birer harf azaltarak kontrol et
+				while (!variable_value && i > start)
+				{
+					i--;
+					free(variable_name);
+					variable_name = ft_substr(token_value, start, i - start);
+					variable_value = get_env_value(env_list, variable_name);
+				}
+				if (!variable_value)
 					variable_value = "";
 				result = ft_strjoin_free(result, variable_value);
 				free(variable_name);
@@ -63,7 +71,7 @@ void expand_tokens(t_token *token_list, t_env *env_list)
 
 	while (token_list)
 	{
-		if (token_list->type == TOKEN_WORD)
+		if (token_list->type == TOKEN_WORD && token_list->quote != SINGLE_QUOTE)
 		{
 			expanded_word = expand_word(token_list->value, env_list);
 			if (!expanded_word)

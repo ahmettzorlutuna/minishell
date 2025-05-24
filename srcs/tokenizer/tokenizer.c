@@ -24,20 +24,17 @@ static t_word_info get_word_with_quotes(const char *input, int *i)
 	(*i)++;
 	start = *i;
 	len = 0;
-
 	while (input[*i] && input[*i] != quote_char)
 	{
 		(*i)++;
 		len++;
 	}
-
 	if (!input[*i])
 	{
 		ft_putstr_fd("syntax error: unexpected EOF while looking for matching quote\n", 2);
 		info.value = NULL;
 		return info;
 	}
-
 	info.value = ft_substr(input, start, len);
 	(*i)++;
 	return info;
@@ -49,23 +46,32 @@ static t_word_info get_combined_token(const char *input, int *i)
 	t_word_info part;
 	char *temp;
 
-	while (input[*i] && !is_whitespace(input[*i]) && !is_operator(input[*i]))
+	while (input[*i])
 	{
+		if (is_whitespace(input[*i]) || is_operator(input[*i]))
+			break;
+
 		if (input[*i] == '\'' || input[*i] == '"')
+		{
 			part = get_word_with_quotes(input, i);
+		}
 		else
 		{
-			part.value = get_word(input, i);
+			int start = *i;
+			while (input[*i] && !is_whitespace(input[*i]) && !is_operator(input[*i]) &&
+				input[*i] != '"' && input[*i] != '\'')
+			{
+				(*i)++;
+			}
+			part.value = ft_substr(input, start, *i - start);
 			part.quote = NO_QUOTE;
 		}
-
 		if (!part.value)
 		{
 			free(result.value);
 			result.value = NULL;
 			return result;
 		}
-
 		if (!result.value)
 			result.value = ft_strdup(part.value);
 		else
@@ -74,10 +80,8 @@ static t_word_info get_combined_token(const char *input, int *i)
 			result.value = ft_strjoin(result.value, part.value);
 			free(temp);
 		}
-
 		if (result.quote == NO_QUOTE && part.quote != NO_QUOTE)
 			result.quote = part.quote;
-
 		free(part.value);
 	}
 	return result;
@@ -102,7 +106,7 @@ t_token *tokenizer(char *input)
 		{
 			len = get_token_len(get_operator_type(&input[i]));
 			str = ft_substr(input, i, len);
-			new_token = create_token(get_operator_type(&input[i]), str, word_info.quote);
+			new_token = create_token(get_operator_type(&input[i]), str, NO_QUOTE);
 			if (!new_token)
 				return (NULL);
 			add_token(&token_list, new_token);
@@ -113,9 +117,7 @@ t_token *tokenizer(char *input)
 			word_info = get_combined_token(input, &i);
 			if (!word_info.value)
 				return NULL;
-			if (!str)
-				return (NULL);
-			t_token *new_token = create_token(TOKEN_WORD, word_info.value, word_info.quote);
+			new_token = create_token(TOKEN_WORD, word_info.value, word_info.quote);
 			if (!new_token)
 				return (NULL);
 			add_token(&token_list, new_token);

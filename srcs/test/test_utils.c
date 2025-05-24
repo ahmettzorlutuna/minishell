@@ -53,3 +53,46 @@ void print_tokens(t_token *tokens)
 		tokens = tokens->next;
 	}
 }
+
+void	print_parsed_command(t_command *cmd)
+{
+	int		i;
+	t_redirection *redir;
+
+	while (cmd)
+	{
+		printf("🟢 Komut:\n");
+
+		// Argümanlar
+		if (cmd->args)
+		{
+			i = 0;
+			while (cmd->args[i])
+			{
+				printf("  🔹 Arg[%d]: %s\n", i, cmd->args[i]);
+				i++;
+			}
+		}
+		else
+			printf("  ⚠️  Argüman yok.\n");
+
+		// Redirection'lar
+		redir = cmd->redirects;
+		while (redir)
+		{
+			const char *redir_type = (
+				redir->type == TOKEN_REDIRECT_IN ? "<" :
+				redir->type == TOKEN_REDIRECT_OUT ? ">" :
+				redir->type == TOKEN_APPEND ? ">>" :
+				redir->type == TOKEN_HEREDOC ? "<<" : "?"
+			);
+			printf("  🔁 Redirection: %s %s\n", redir_type, redir->filename);
+			redir = redir->next;
+		}
+
+		// Sonraki pipe varsa
+		cmd = cmd->next_pipe;
+		if (cmd)
+			printf("🔗 PIPE →\n");
+	}
+}

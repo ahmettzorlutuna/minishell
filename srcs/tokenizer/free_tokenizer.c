@@ -1,18 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   free_lexer.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azorlutu <azorlutu@student.42istanbul      +#+  +:+       +#+        */
+/*   By: azorlutu <azorlutu@student.42istanbul.com  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/04 17:49:57 by azorlutu          #+#    #+#             */
-/*   Updated: 2025/05/04 17:49:58 by azorlutu         ###   ########.fr       */
+/*   Created: 2025/05/23 01:02:18 by azorlutu          #+#    #+#             */
+/*   Updated: 2025/05/23 01:02:18 by azorlutu         ###   ########.tr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell.h"
 
-int main() {
-    printf("Testtir lo");
-    return 0;
+void free_token_list(t_token *head)
+{
+	t_token *tmp;
+
+	while (head)
+	{
+		tmp = head;
+		head = head->next;
+		if (tmp->value)
+			free(tmp->value);
+		free(tmp);
+	}
 }
+

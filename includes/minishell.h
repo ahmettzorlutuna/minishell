@@ -88,14 +88,6 @@ typedef	struct	s_command
 	char **args;
 	t_redirection *redirects;
 	struct s_command	*next_pipe;
-	// char *cmd;				 // Komut adı
-	// char **args;			 // Komutun argümanları (null-terminated)
-	// t_redirection *redir;	 // Yönlendirmeler
-	// char *heredoc_content;	 // Heredoc içeriği (veya geçici dosya adı)
-	// char *heredoc_delimiter; // Heredoc sınırlayıcısı
-	// int pipe_in_fd;			 // Önceki komuttan okuma için pipe FD
-	// int pipe_out_fd;		 // Sonraki komuta yazma için pipe FD
-	// struct s_cmd *next;		 // Boru hattındaki sonraki komut
 } t_command;
 
 typedef	struct	s_env

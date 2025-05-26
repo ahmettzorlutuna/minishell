@@ -156,5 +156,6 @@ t_command *parse_command(t_token **tokens);
 /*	Test functions	*/
 void	print_tokens(t_token *tokens);
 void	print_parsed_command(t_command *cmd);
+void	print_command(t_command *cmd);
 
 #endif

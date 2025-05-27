@@ -18,15 +18,16 @@
 # include <readline/readline.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <sys/stat.h>  //stat(), fstat(), lstat()
-# include <dirent.h>	   //opendir(), readdir(), closedir()
-# include <string.h>	   //strerror()
-# include <fcntl.h>	   //open(), O_RDONLY
-# include <sys/ioctl.h> //ioctl()
-# include <signal.h>	   //signal()
+# include <sys/stat.h>		//stat(), fstat(), lstat()
+# include <dirent.h>		//opendir(), readdir(), closedir()
+# include <string.h>		//strerror()
+# include <fcntl.h>			//open(), O_RDONLY
+# include <sys/ioctl.h>		//ioctl()
+# include <signal.h>		//signal()
+# include <sys/wait.h>		//waitpid()
 
-# include <curses.h> // for tgetent(), tgetstr(), tputs()
-# include <term.h>	// for tgetent(), tgetstr(), tputs()
+# include <curses.h>		// for tgetent(), tgetstr(), tputs()
+# include <term.h>			// for tgetent(), tgetstr(), tputs()
 
 # include "../libft/libft.h"
 
@@ -112,7 +113,7 @@ typedef	struct	s_minishell
 void	init_mini_data(t_minishell *minishell, char **envp);
 void	init_minishell(t_minishell *minishell);
 
-/*	signal */
+/*	Signal */
 void	init_signal_handler(void);
 
 /*	Environments	*/
@@ -144,6 +145,11 @@ void expand_tokens(t_token *token_list, t_env *env_list);
 
 /*  Parser  */
 t_command *parse_command(t_token **tokens);
+
+/* Executor */
+char *ft_strjoin_three(const char *s1, const char *s2, const char *s3);
+void free_split(char **split);
+void execute_single_command(t_command *cmd, t_minishell *minishell);
 
 /*	Test functions	*/
 void	print_tokens(t_token *tokens);

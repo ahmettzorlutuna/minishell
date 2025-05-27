@@ -15,11 +15,15 @@
 static t_word_info get_word_with_quotes(const char *input, int *i)
 {
 	t_word_info info;
-	int start, len;
+	int start;
+	int len;
 	char quote_char;
 
 	quote_char = input[*i];
-	info.quote = (quote_char == '\'') ? SINGLE_QUOTE : DOUBLE_QUOTE;
+	if(quote_char == '\'')
+		info.quote = SINGLE_QUOTE;
+	else
+		info.quote = DOUBLE_QUOTE;
 
 	(*i)++;
 	start = *i;
@@ -44,11 +48,12 @@ static t_word_info get_combined_token(const char *input, int *i)
 {
 	t_word_info result = {NULL, NO_QUOTE};
 	t_word_info part;
+	int start;
 	char *temp;
 
 	while (input[*i])
 	{
-		if (is_whitespace(input[*i]) || is_operator(input[*i]))
+		if (is_whitespace(input[*i]) || is_operator(input[*i])) //"a"b>"c"
 			break;
 
 		if (input[*i] == '\'' || input[*i] == '"')
@@ -57,7 +62,7 @@ static t_word_info get_combined_token(const char *input, int *i)
 		}
 		else
 		{
-			int start = *i;
+			start = *i;
 			while (input[*i] && !is_whitespace(input[*i]) && !is_operator(input[*i]) &&
 				input[*i] != '"' && input[*i] != '\'')
 			{
@@ -80,7 +85,7 @@ static t_word_info get_combined_token(const char *input, int *i)
 			result.value = ft_strjoin(result.value, part.value);
 			free(temp);
 		}
-		if (result.quote == NO_QUOTE && part.quote != NO_QUOTE)
+		if (result.quote == NO_QUOTE && part.quote != NO_QUOTE) // Quote türü henüz set edilmediyse ve şu anki parça tırnaklıysa, ilk gelen quote türünü kaydet. Quote türü bir daha ayarlanmaz
 			result.quote = part.quote;
 		free(part.value);
 	}

@@ -71,17 +71,17 @@ typedef struct s_word_info
 
 typedef struct s_token
 {
-	t_token_type type;	  // Token türü (örneğin: TOKEN_WORD, TOKEN_REDIRECT_IN, vb.)
-	t_quote_type quote; // Alıntı türü (örneğin: NO_QUOTE, SINGLE_QUOTE, DOUBLE_QUOTE)
-	char *value;		  // Tokenin değeri (örneğin: "hello", ">", "<", "|", vb.)
-	struct s_token *next; // Sonraki tokeni işaret eder
+	t_token_type type;
+	t_quote_type quote;
+	char *value;
+	struct s_token *next;
 } t_token;
 
 typedef struct s_redirection
 {
-	t_token_type type;	  // Yönlendirme türü (in, out, append, vb.)
-	char *filename;			  // Yönlendirilen dosya adı
-	struct s_redirection *next; // Birden fazla yönlendirme olabilir
+	t_token_type type;
+	char *filename;
+	struct s_redirection *next;
 } t_redirection;
 
 typedef	struct	s_command
@@ -93,20 +93,19 @@ typedef	struct	s_command
 
 typedef	struct	s_env
 {
-	char *key;	 // Örn: "PATH"
-	char *value; // Örn: "/usr/bin:/bin"
+	char *key;
+	char *value;
 	struct s_env *next;
 } t_env;
 
 typedef	struct	s_minishell
 {
-	char *input;		   // Kullanıcıdan alınan girdi
-	t_env *env_list;	   // Çevresel değişkenler (linked list)
-	t_token *tokens;	   // Tokenler (linked list)
-	t_command *command_list; // Komut listesi
-	char **env_array;	   // Çevresel değişkenler (array hali execve çalıştırmak için dizi formatında vercez)
-	int last_exit_code;	   // Son çıkış kodu $?
-	int number_of_prompts; // Kaç tane prompt gösterildi
+	char *input;
+	t_env *env_list;
+	t_token *tokens;
+	t_command *command_list;
+	char **env_array;
+	int last_exit_code;
 } t_minishell;
 
 /*	Minishell */
@@ -150,6 +149,10 @@ t_command *parse_command(t_token **tokens);
 char *ft_strjoin_three(const char *s1, const char *s2, const char *s3);
 void free_split(char **split);
 void execute_single_command(t_command *cmd, t_minishell *minishell);
+int is_path_executable(const char *path);
+void execute_pipeline(t_command *cmd, t_minishell *minishell);
+char *resolve_path(const char *cmd, t_env *env_list);
+void execute_command_list(t_command *cmd, t_minishell *minishell);
 
 /*	Test functions	*/
 void	print_tokens(t_token *tokens);

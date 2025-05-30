@@ -32,6 +32,8 @@ SRC	=	builtins/cd.c \
 		env/free_env.c \
 		executor/executor_utils.c \
 		executor/executor.c \
+		executor/heredoc.c \
+		executor/redirection.c \
 		expander/expander.c \
 		expander/expander_utils.c \
 		tokenizer/free_tokenizer.c \

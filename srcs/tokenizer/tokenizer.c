@@ -121,7 +121,7 @@ t_token *tokenizer(char *input)
 		{
 			word_info = get_combined_token(input, &i);
 			if (!word_info.value)
-				return NULL;
+				return (NULL);
 			new_token = create_token(TOKEN_WORD, word_info.value, word_info.quote);
 			if (!new_token)
 				return (NULL);

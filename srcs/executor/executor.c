@@ -12,45 +12,6 @@
 
 #include "../includes/minishell.h"
 
-static	int is_path_executable(const char *path)
-{
-	return (access(path, X_OK) == 0);
-}
-
-static	char *resolve_path(const char *cmd, t_env *env_list)
-{
-    char	**paths;
-    char	*path_value;
-    char	*temp_path;
-    int		i;
-
-	if(!cmd || !*cmd)
-		return (NULL);
-	if(ft_strchr(cmd, '/') && is_path_executable(cmd))
-		return (ft_strdup(cmd));
-
-	path_value = get_env_value(env_list, "PATH");
-	if(!path_value)
-		return (NULL);
-	paths = ft_split(path_value, ':');
-	if(!paths)
-		return (NULL);
-	i = 0;
-	while (paths[i])
-	{
-		temp_path = ft_strjoin_three(paths[i], "/", cmd);
-		if(is_path_executable(temp_path))
-		{
-			free_split(paths);
-			return (temp_path);
-		}
-		free(temp_path);
-		i++;
-	}
-	free_split(paths);
-	return (NULL);
-}
-
 void execute_single_command(t_command *cmd, t_minishell *minishell)
 {
 	pid_t	pid;
@@ -83,5 +44,79 @@ void execute_single_command(t_command *cmd, t_minishell *minishell)
 	
 	free(path);
 	if(WIFEXITED(status))
-		minishell->last_exit_code = WIFEXITED(status);
+		minishell->last_exit_code = WEXITSTATUS(status);
+}
+
+void execute_pipeline(t_command *cmd, t_minishell *minishell)
+{
+	int		fd[2];
+	pid_t	pid1;
+	pid_t	pid2;
+	int		status;
+	char *path1;
+	char *path2;
+
+	if(!cmd || !cmd->next_pipe)
+		return;
+	if(pipe(fd) == -1)
+	{
+		perror("pipe error");
+		return;
+	}
+
+	pid1 = fork();
+	if(pid1 == 0)
+	{
+		// Child 1 → stdout'u pipe'a ver
+		dup2(fd[1], STDOUT_FILENO);
+		close(fd[0]); // Read ucunu kapat
+		close(fd[1]);
+
+		path1 = resolve_path(cmd->args[0], minishell->env_list);
+		if (!path1)
+		{
+			ft_putstr_fd(cmd->args[0], 2);
+			ft_putstr_fd(": command not found\n", 2);
+			exit(127);
+		}
+		execve(path1, cmd->args, minishell->env_array);
+		perror("execve cmd1");
+		exit(126);
+	}
+
+	pid2 = fork();
+	if(pid2 == 0)
+	{
+		// Child 2 → stdin'i pipe'tan al
+		dup2(fd[0], STDIN_FILENO);
+		close(fd[1]); // Write ucunu kapat
+		close(fd[0]);
+
+		path2 = resolve_path(cmd->next_pipe->args[0], minishell->env_list);
+		if (!path2)
+		{
+			ft_putstr_fd(cmd->next_pipe->args[0], 2);
+			ft_putstr_fd(": command not found\n", 2);
+			exit(127);
+		}
+		execve(path2, cmd->next_pipe->args, minishell->env_array);
+		perror("execve cmd2");
+		exit(126);
+	}
+	close(fd[0]);
+	close(fd[1]);
+	waitpid(pid1, &status, 0);
+	waitpid(pid2, &status, 0);
+	if(WIFEXITED(status))
+			minishell->last_exit_code = WEXITSTATUS(status);
+}
+
+void execute_command_list(t_command *cmd, t_minishell *minishell)
+{
+	if(!cmd)
+		return ;
+	if(!cmd->next_pipe)
+		execute_single_command(cmd, minishell);
+	else
+		execute_pipeline(cmd, minishell);
 }

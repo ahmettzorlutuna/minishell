@@ -19,7 +19,7 @@ void	exit_minishell(t_minishell *minishell)
 	free_token_list(minishell->tokens);
 	free(minishell->input);
 	free(minishell);
-	exit(0);
+	exit(minishell->last_exit_code);
 }
 
 void	init_mini_data(t_minishell *minishell, char **envp)
@@ -39,6 +39,6 @@ void init_minishell(t_minishell *minishell)
 	minishell->command_list = parse_command(&minishell->tokens);
 	// print_tokens(minishell->tokens);
 	// print_parsed_command(minishell->command_list);
-	// print_command(minishell->command_list);
-	execute_command_list(minishell->command_list, minishell);
+	// print_command(minishell->command_list);	
+	execute_pipeline(minishell->command_list, minishell);
 }

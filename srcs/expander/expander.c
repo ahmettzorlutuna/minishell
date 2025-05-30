@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static char *expand_word(char *token_value, t_env *env_list)
+static char *expand_word(t_quote_type quote_type, char *token_value, t_env *env_list)
 {
 	char *result;
 	char *new_result;
@@ -42,7 +42,7 @@ static char *expand_word(char *token_value, t_env *env_list)
 				variable_name = ft_substr(token_value, start, i - start);
 				variable_value = get_env_value(env_list, variable_name);
 				// Eğer variable bulunamazsa, geri dönüp birer harf azaltarak kontrol et
-				while (!variable_value && i > start)
+				while (!variable_value && i > start && quote_type != NO_QUOTE)
 				{
 					i--;
 					free(variable_name);
@@ -73,7 +73,7 @@ void expand_tokens(t_token *token_list, t_env *env_list)
 	{
 		if (token_list->type == TOKEN_WORD && token_list->quote != SINGLE_QUOTE)
 		{
-			expanded_word = expand_word(token_list->value, env_list);
+			expanded_word = expand_word(token_list->quote, token_list->value, env_list);
 			if (!expanded_word)
 				return;
 			free(token_list->value);

@@ -29,7 +29,6 @@ void	init_mini_data(t_minishell *minishell, char **envp)
 	minishell->env_list = init_env_list(envp);
 	minishell->env_array = env_list_to_array(minishell->env_list);
 	minishell->last_exit_code = 0;
-	minishell->number_of_prompts = 0;
 }
 
 void init_minishell(t_minishell *minishell)
@@ -41,5 +40,5 @@ void init_minishell(t_minishell *minishell)
 	// print_tokens(minishell->tokens);
 	// print_parsed_command(minishell->command_list);
 	// print_command(minishell->command_list);
-	execute_single_command(minishell->command_list, minishell);
+	execute_command_list(minishell->command_list, minishell);
 }

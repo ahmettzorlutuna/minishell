@@ -46,7 +46,7 @@ int	main(int argc, char **argv, char **envp)
 	{
 		perror("No arguments expected for minishell");
 		free(minishell);
-		exit(2);
+		exit(minishell->last_exit_code);
 	}
 	init_mini_data(minishell,envp);
 	shell_loop(minishell);

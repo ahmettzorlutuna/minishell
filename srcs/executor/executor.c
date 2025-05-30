@@ -12,111 +12,88 @@
 
 #include "../includes/minishell.h"
 
-void execute_single_command(t_command *cmd, t_minishell *minishell)
+static	int pipe_safe(int pipe_fd[2])
 {
-	pid_t	pid;
-	int		status;
-	char	*path;
-
-	status = 0;
-	if(!cmd || !cmd->args || !cmd->args[0])
-		return;
-	path = resolve_path(cmd->args[0], minishell->env_list);
-	if(!path)
+	if(pipe(pipe_fd) == -1)
 	{
-		ft_putstr_fd(cmd->args[0], 2);
-		ft_putstr_fd(": command not found\n",2);
-		minishell->last_exit_code = 127;
-		return ;
+		perror("pipe error");
+		return (1);
 	}
+	return (0);
+}
+
+static	pid_t fork_safe(void)
+{
+	pid_t pid;
 
 	pid = fork();
-	if(pid == 0)
+	if(pid == -1)
+		perror("fork error");
+	return (pid);
+}
+
+static	void setup_child_processes(t_command *cmd, int prev_fd, int	pipe_fd[2],	t_minishell *minishell)
+{
+	if(prev_fd != -1)
 	{
-		execve(path, cmd->args, minishell->env_array);
-		perror("execve");
-		exit(126);
+		dup2(prev_fd, STDIN_FILENO);
+		close(prev_fd);
 	}
-	else if(pid > 0)
-		waitpid(pid, &status, 0);
-	else
-		perror("fork");
-	
-	free(path);
-	if(WIFEXITED(status))
-		minishell->last_exit_code = WEXITSTATUS(status);
+	if(cmd->next_pipe)
+	{
+		close(pipe_fd[0]);
+		dup2(pipe_fd[1],STDOUT_FILENO);
+		close(pipe_fd[1]);
+	}
+	execve(resolve_path(cmd->args[0],minishell->env_list), cmd->args, minishell->env_array);
+	ft_putstr_fd("minishell: command not found: ", 2);
+	ft_putstr_fd(cmd->args[0], 2);
+	ft_putstr_fd("\n", 2);
+	exit(minishell->last_exit_code);
+}
+
+static int handle_parent_process(pid_t pid, int prev_fd, int pipe_fd[2], t_command *cmd)
+{
+	int status;
+
+	status = 0;
+	if(prev_fd != -1)
+		close(prev_fd);
+	if(cmd->next_pipe)
+	{
+		close(pipe_fd[1]);
+		prev_fd = pipe_fd[0];
+	}
+	waitpid(pid, &status, 0);
+	return (status);
 }
 
 void execute_pipeline(t_command *cmd, t_minishell *minishell)
 {
-	int		fd[2];
-	pid_t	pid1;
-	pid_t	pid2;
-	int		status;
-	char *path1;
-	char *path2;
+	int	pipe_fd[2];
+	int prev_fd = -1;
+	pid_t pid;
+	int status;
 
-	if(!cmd || !cmd->next_pipe)
-		return;
-	if(pipe(fd) == -1)
+	status = 0;
+	while (cmd)
 	{
-		perror("pipe error");
-		return;
-	}
-
-	pid1 = fork();
-	if(pid1 == 0)
-	{
-		// Child 1 → stdout'u pipe'a ver
-		dup2(fd[1], STDOUT_FILENO);
-		close(fd[0]); // Read ucunu kapat
-		close(fd[1]);
-
-		path1 = resolve_path(cmd->args[0], minishell->env_list);
-		if (!path1)
+		if(cmd->next_pipe && pipe_safe(pipe_fd))
+			return ;
+		pid = fork_safe();
+		if(pid == -1)
+			return ;
+		else if(pid == 0)
 		{
-			ft_putstr_fd(cmd->args[0], 2);
-			ft_putstr_fd(": command not found\n", 2);
-			exit(127);
+			if(set_redirection_fds(cmd->redirects) != 0)
+				exit(minishell->last_exit_code);
+			setup_child_processes(cmd, prev_fd, pipe_fd, minishell);
 		}
-		execve(path1, cmd->args, minishell->env_array);
-		perror("execve cmd1");
-		exit(126);
+		status = handle_parent_process(pid, prev_fd, pipe_fd, cmd);
+		if(cmd->next_pipe)
+			prev_fd = pipe_fd[0];
+		cmd = cmd->next_pipe;
 	}
-
-	pid2 = fork();
-	if(pid2 == 0)
-	{
-		// Child 2 → stdin'i pipe'tan al
-		dup2(fd[0], STDIN_FILENO);
-		close(fd[1]); // Write ucunu kapat
-		close(fd[0]);
-
-		path2 = resolve_path(cmd->next_pipe->args[0], minishell->env_list);
-		if (!path2)
-		{
-			ft_putstr_fd(cmd->next_pipe->args[0], 2);
-			ft_putstr_fd(": command not found\n", 2);
-			exit(127);
-		}
-		execve(path2, cmd->next_pipe->args, minishell->env_array);
-		perror("execve cmd2");
-		exit(126);
-	}
-	close(fd[0]);
-	close(fd[1]);
-	waitpid(pid1, &status, 0);
-	waitpid(pid2, &status, 0);
 	if(WIFEXITED(status))
-			minishell->last_exit_code = WEXITSTATUS(status);
-}
-
-void execute_command_list(t_command *cmd, t_minishell *minishell)
-{
-	if(!cmd)
-		return ;
-	if(!cmd->next_pipe)
-		execute_single_command(cmd, minishell);
-	else
-		execute_pipeline(cmd, minishell);
+		minishell->last_exit_code = WEXITSTATUS(status);
 }

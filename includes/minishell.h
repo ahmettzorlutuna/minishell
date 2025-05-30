@@ -81,6 +81,7 @@ typedef struct s_redirection
 {
 	t_token_type type;
 	char *filename;
+	int fd;
 	struct s_redirection *next;
 } t_redirection;
 
@@ -148,11 +149,11 @@ t_command *parse_command(t_token **tokens);
 /* Executor */
 char *ft_strjoin_three(const char *s1, const char *s2, const char *s3);
 void free_split(char **split);
-void execute_single_command(t_command *cmd, t_minishell *minishell);
 int is_path_executable(const char *path);
 void execute_pipeline(t_command *cmd, t_minishell *minishell);
 char *resolve_path(const char *cmd, t_env *env_list);
-void execute_command_list(t_command *cmd, t_minishell *minishell);
+int set_redirection_fds(t_redirection *redir);
+int handle_heredoc(t_command *cmd);
 
 /*	Test functions	*/
 void	print_tokens(t_token *tokens);

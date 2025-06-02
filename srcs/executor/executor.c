@@ -76,6 +76,11 @@ void execute_pipeline(t_command *cmd, t_minishell *minishell)
 	int status;
 
 	status = 0;
+	if (handle_heredoc(cmd) != 0)
+	{
+		minishell->last_exit_code = 1;
+		return ;
+	}
 	while (cmd)
 	{
 		if(cmd->next_pipe && pipe_safe(pipe_fd))

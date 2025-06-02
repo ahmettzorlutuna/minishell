@@ -38,7 +38,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 
 	init_signal_handler();
-	minishell = (t_minishell *)malloc(sizeof(t_minishell));
+	minishell = ft_calloc(1, sizeof(t_minishell));
 	if (!minishell)
 		return (ft_putstr_fd("Error: Memory allocation failed\n",
 				2), EXIT_FAILURE);

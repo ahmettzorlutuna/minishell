@@ -30,13 +30,14 @@ int handle_heredoc(t_command *cmd)
                 while (1)
                 {
                     line = readline("> ");
-                    if(!line || ft_strcmp(line, redir->filename) == 0)
+                    if(!line || !redir->filename || ft_strcmp(line, redir->filename) == 0)
                         break;
                     write(pipefd[1], line, ft_strlen(line));
                     write(pipefd[1], "\n", 1);
                     free(line);
                 }
-                free(line);
+                if(line)
+                    free(line);
                 close(pipefd[1]);
                 redir->fd = pipefd[0];
             }

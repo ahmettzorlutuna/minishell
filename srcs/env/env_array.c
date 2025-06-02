@@ -52,7 +52,7 @@ char	**env_list_to_array(t_env *env_list)
         count++;
         tmp = tmp->next;
     }
-    env_array = malloc(sizeof(char *) * (count + 1));
+    env_array = ft_calloc(count + 1, sizeof(char *));
     if(!env_array)
         return (NULL);
     tmp = env_list;

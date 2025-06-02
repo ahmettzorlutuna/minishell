@@ -41,9 +41,10 @@ static int parse_redirection(t_token **tokens, t_command *cmd)
 
 	if (!(*tokens)->next || (*tokens)->next->type != TOKEN_WORD)
 		return (1); // Syntax error.
-	redir = malloc(sizeof(t_redirection));
+	redir = ft_calloc(1, sizeof(t_redirection));
 	if (!redir)
 		return (1);
+	redir->fd = -1;
 	redir->type = (*tokens)->type;
 	redir->filename = ft_strdup((*tokens)->next->value);
 	redir_ptr = &cmd->redirects;

@@ -60,6 +60,7 @@ char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strtrim(char const *s1, char const *set);
 char	*ft_itoa(int n);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
+char	*ft_strndup(const char *s, size_t n);
 
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 char	*ft_strcpy(char *dest, const char *src);

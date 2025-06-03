@@ -20,16 +20,19 @@ SRC_PATH = ./srcs/
 INC_PATH = ./includes/
 OBJ_PATH = ./objs/
 
-SRC	=	builtins/cd.c \
-		builtins/echo.c \
-		builtins/env.c \
-		builtins/exit.c \
-		builtins/export.c \
-		builtins/pwd.c \
-		builtins/unset.c \
+SRC	=	builtins/builtin_utils.c \
+		builtins/builtin_cd.c \
+		builtins/builtin_echo.c \
+		builtins/builtin_env.c \
+		builtins/builtin_exit.c \
+		builtins/builtin_export.c \
+		builtins/builtin_pwd.c \
+		builtins/builtin_unset.c \
 		env/env_array.c \
 		env/env_list.c \
 		env/free_env.c \
+		env/sort_env_list.c \
+		executor/executor_utils2.c \
 		executor/executor_utils.c \
 		executor/executor.c \
 		executor/heredoc.c \

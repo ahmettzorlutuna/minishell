@@ -116,6 +116,15 @@ void	init_minishell(t_minishell *minishell);
 /*	Signal */
 void	init_signal_handler(void);
 
+/* Builtins */
+int	is_parent_builtin(char *cmd);
+int execute_single_builtin(t_command *cmd, t_minishell *minishell);
+int	run_builtin(t_command *cmd, t_minishell *minishell);
+int	builtin_echo(char **args);
+int	builtin_cd(char **args, t_minishell *minishell);
+int	builtin_pwd(void);
+int	builtin_export(char **args, t_minishell *minishell);
+
 /*	Environments	*/
 t_env	*init_env_list(char **envp);
 char	*get_env_value(t_env *env_list, const char *key);
@@ -127,6 +136,7 @@ void	update_env_array(t_minishell *mini);
 void	free_env_list(t_env *env_list);
 void	free_env_array(char **env_array);
 void	exit_minishell(t_minishell *minishell);
+t_env	*sort_env_list(t_env *env);
 
 /*      Tokenizer      */
 t_token			*tokenizer(char *input);
@@ -154,6 +164,8 @@ void execute_pipeline(t_command *cmd, t_minishell *minishell);
 char *resolve_path(const char *cmd, t_env *env_list);
 int set_redirection_fds(t_redirection *redir);
 int handle_heredoc(t_command *cmd);
+int pipe_safe(int pipe_fd[2]);
+pid_t fork_safe(void);
 
 /*	Test functions	*/
 void	print_tokens(t_token *tokens);

@@ -12,26 +12,6 @@
 
 #include "../includes/minishell.h"
 
-static	int pipe_safe(int pipe_fd[2])
-{
-	if(pipe(pipe_fd) == -1)
-	{
-		perror("pipe error");
-		return (1);
-	}
-	return (0);
-}
-
-static	pid_t fork_safe(void)
-{
-	pid_t pid;
-
-	pid = fork();
-	if(pid == -1)
-		perror("fork error");
-	return (pid);
-}
-
 static	void setup_child_processes(t_command *cmd, int prev_fd, int	pipe_fd[2],	t_minishell *minishell)
 {
 	if(prev_fd != -1)
@@ -45,11 +25,16 @@ static	void setup_child_processes(t_command *cmd, int prev_fd, int	pipe_fd[2],	t
 		dup2(pipe_fd[1],STDOUT_FILENO);
 		close(pipe_fd[1]);
 	}
-	execve(resolve_path(cmd->args[0],minishell->env_list), cmd->args, minishell->env_array);
-	ft_putstr_fd("minishell: command not found: ", 2);
-	ft_putstr_fd(cmd->args[0], 2);
-	ft_putstr_fd("\n", 2);
-	exit(minishell->last_exit_code);
+	if (is_parent_builtin(cmd->args[0]))
+		exit(run_builtin(cmd, minishell));
+	else
+	{
+		execve(resolve_path(cmd->args[0],minishell->env_list), cmd->args, minishell->env_array);
+		ft_putstr_fd("minishell: command not found: ", 2);
+		ft_putstr_fd(cmd->args[0], 2);
+		ft_putstr_fd("\n", 2);
+		exit(minishell->last_exit_code);
+	}
 }
 
 static int handle_parent_process(pid_t pid, int prev_fd, int pipe_fd[2], t_command *cmd)
@@ -68,7 +53,7 @@ static int handle_parent_process(pid_t pid, int prev_fd, int pipe_fd[2], t_comma
 	return (status);
 }
 
-void execute_pipeline(t_command *cmd, t_minishell *minishell)
+static void execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
 {
 	int	pipe_fd[2];
 	int prev_fd = -1;
@@ -101,4 +86,26 @@ void execute_pipeline(t_command *cmd, t_minishell *minishell)
 	}
 	if(WIFEXITED(status))
 		minishell->last_exit_code = WEXITSTATUS(status);
+}
+
+void	execute_pipeline(t_command *cmd, t_minishell *minishell)
+{
+	if (!cmd)
+		return ;
+	if (!cmd->next_pipe && is_parent_builtin(cmd->args[0]))
+	{
+		if (handle_heredoc(cmd) != 0)
+		{
+			minishell->last_exit_code = 1;
+			return ;
+		}
+		if (set_redirection_fds(cmd->redirects) != 0)
+		{
+			minishell->last_exit_code = 1;
+			return ;
+		}
+		execute_single_builtin(cmd, minishell);
+	}
+	else
+		execute_pipeline_fork(cmd, minishell);
 }

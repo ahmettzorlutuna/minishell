@@ -12,29 +12,28 @@
 
 #include "../includes/minishell.h"
 
-static	void setup_child_processes(t_command *cmd, int prev_fd, int	pipe_fd[2],	t_minishell *minishell)
+static void	setup_child_processes(t_command *cmd, int prev_fd, int pipe_fd[2], t_minishell *minishell)
 {
-	if(prev_fd != -1)
+	if (prev_fd != -1)
 	{
 		dup2(prev_fd, STDIN_FILENO);
 		close(prev_fd);
 	}
-	if(cmd->next_pipe)
+	if (cmd->next_pipe)
 	{
 		close(pipe_fd[0]);
-		dup2(pipe_fd[1],STDOUT_FILENO);
+		dup2(pipe_fd[1], STDOUT_FILENO);
 		close(pipe_fd[1]);
 	}
-	if (is_parent_builtin(cmd->args[0]))
-		exit(run_builtin(cmd, minishell));
-	else
-	{
-		execve(resolve_path(cmd->args[0],minishell->env_list), cmd->args, minishell->env_array);
-		ft_putstr_fd("minishell: command not found: ", 2);
-		ft_putstr_fd(cmd->args[0], 2);
-		ft_putstr_fd("\n", 2);
+	if (set_redirection_fds(cmd->redirects) != 0)
 		exit(minishell->last_exit_code);
-	}
+	if (is_builtin(cmd->args[0]))
+		exit(run_builtin(cmd, minishell));
+	execve(resolve_path(cmd->args[0], minishell->env_list), cmd->args, minishell->env_array);
+	ft_putstr_fd("minishell: command not found: ", 2);
+	ft_putstr_fd(cmd->args[0], 2);
+	ft_putstr_fd("\n", 2);
+	exit(127);
 }
 
 static int handle_parent_process(pid_t pid, int prev_fd, int pipe_fd[2], t_command *cmd)
@@ -107,5 +106,7 @@ void	execute_pipeline(t_command *cmd, t_minishell *minishell)
 		execute_single_builtin(cmd, minishell);
 	}
 	else
+	{
 		execute_pipeline_fork(cmd, minishell);
+	}
 }

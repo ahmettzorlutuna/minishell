@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static char *expand_word(t_quote_type quote_type, char *token_value, t_env *env_list)
+static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *token_value, t_env *env_list)
 {
 	char *result;
 	char *new_result;
@@ -30,7 +30,7 @@ static char *expand_word(t_quote_type quote_type, char *token_value, t_env *env_
 			i++;
 			if (token_value[i] == '?')
 			{
-				char *exit_status = ft_itoa(g_signal_flag);
+				char *exit_status = ft_itoa(minishell->last_exit_code);
 				result = ft_strjoin_free(result, exit_status);
 				i++;
 			}
@@ -65,7 +65,7 @@ static char *expand_word(t_quote_type quote_type, char *token_value, t_env *env_
 	return (result);
 }
 
-void expand_tokens(t_token *token_list, t_env *env_list)
+void expand_tokens(t_minishell *minishell, t_token *token_list, t_env *env_list)
 {
 	char *expanded_word;
 
@@ -73,7 +73,7 @@ void expand_tokens(t_token *token_list, t_env *env_list)
 	{
 		if (token_list->type == TOKEN_WORD && token_list->quote != SINGLE_QUOTE)
 		{
-			expanded_word = expand_word(token_list->quote, token_list->value, env_list);
+			expanded_word = expand_word(minishell, token_list->quote, token_list->value, env_list);
 			if (!expanded_word)
 				return;
 			free(token_list->value);

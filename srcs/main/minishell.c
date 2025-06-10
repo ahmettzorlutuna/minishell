@@ -35,7 +35,7 @@ void init_minishell(t_minishell *minishell)
 {
 	add_history(minishell->input);
 	minishell->tokens = tokenizer(minishell->input);
-	expand_tokens(minishell->tokens, minishell->env_list);
+	expand_tokens(minishell, minishell->tokens, minishell->env_list);
 	minishell->command_list = parse_command(&minishell->tokens);
 	// print_tokens(minishell->tokens);
 	// print_parsed_command(minishell->command_list);

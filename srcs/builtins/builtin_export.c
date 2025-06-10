@@ -12,22 +12,6 @@
 
 #include "../includes/minishell.h"
 
-static int	is_valid_key(const char *key)
-{
-	int	i;
-
-	if (!key || (!ft_isalpha(key[0]) && key[0] != '_'))
-		return (0);
-	i = 1;
-	while (key[i] && key[i] != '=')
-	{
-		if (!ft_isalnum(key[i]) && key[i] != '_')
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
 static void	print_env_sorted(t_env *env_list)
 {
 	t_env	*sorted;

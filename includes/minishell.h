@@ -118,12 +118,17 @@ void	init_signal_handler(void);
 
 /* Builtins */
 int	is_parent_builtin(char *cmd);
+int	is_builtin(char *cmd);
 int execute_single_builtin(t_command *cmd, t_minishell *minishell);
 int	run_builtin(t_command *cmd, t_minishell *minishell);
+int	is_valid_key(const char *key);
 int	builtin_echo(char **args);
 int	builtin_cd(char **args, t_minishell *minishell);
 int	builtin_pwd(void);
 int	builtin_export(char **args, t_minishell *minishell);
+int	builtin_unset(char **args, t_minishell *minishell);
+int	builtin_env(char **args, t_minishell *minishell);
+int	builtin_exit(char **args, t_minishell *minishell);
 
 /*	Environments	*/
 t_env	*init_env_list(char **envp);

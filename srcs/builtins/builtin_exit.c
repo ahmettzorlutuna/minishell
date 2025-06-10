@@ -10,4 +10,47 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../includes/minishell.h"
 
+static int	is_numeric(const char *str)
+{
+	int	i = 0;
+
+	if (!str || !str[0])
+		return (0);
+	if (str[i] == '+' || str[i] == '-')
+		i++;
+	while (str[i])
+	{
+		if (str[i] < '0' || str[i] > '9')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int	builtin_exit(char **args, t_minishell *minishell)
+{
+	long	exit_code;
+
+	ft_putstr_fd("exit\n", 1);
+	if (!args[1])
+		exit(minishell->last_exit_code);
+	if (!is_numeric(args[1]))
+	{
+		ft_putstr_fd("minishell: exit: ", 2);
+		ft_putstr_fd(args[1], 2);
+		ft_putstr_fd(": numeric argument required\n", 2);
+		exit(minishell->last_exit_code);
+	}
+	if (args[2])
+	{
+		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+		minishell->last_exit_code = 1;
+		return (1);
+	}
+	exit_code = ft_atol(args[1]) % 256;
+	if (exit_code < 0)
+		exit_code += 256;
+	exit(exit_code);
+}

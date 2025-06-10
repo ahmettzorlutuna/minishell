@@ -57,14 +57,6 @@ int	is_builtin(char *cmd)
 		|| !ft_strcmp(cmd, "echo"));
 }
 
-int execute_single_builtin(t_command *cmd, t_minishell *minishell)
-{
-	if (!cmd || !cmd->args || !cmd->args[0])
-		return (1);
-	minishell->last_exit_code = run_builtin(cmd, minishell);
-	return (0);
-}
-
 int	is_valid_key(const char *key)
 {
 	int	i;

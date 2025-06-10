@@ -14,7 +14,6 @@
 
 int	builtin_env(char **args, t_minishell *minishell)
 {
-    printf("girdi");
 	t_env	*tmp;
 
 	if (args[1])

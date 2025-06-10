@@ -10,4 +10,23 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../includes/minishell.h"
 
+int	builtin_unset(char **args, t_minishell *minishell)
+{
+	int	i;
+
+	if (!args || !args[1])
+		return (0);
+	i = 1;
+	while (args[i])
+	{
+		if (is_valid_key(args[i]))
+		{
+			unset_env_value(&minishell->env_list, args[i]);
+			update_env_array(minishell);
+		}
+		i++;
+	}
+	return (0);
+}

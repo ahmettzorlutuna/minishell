@@ -119,7 +119,6 @@ void	init_signal_handler(void);
 /* Builtins */
 int	is_parent_builtin(char *cmd);
 int	is_builtin(char *cmd);
-int execute_single_builtin(t_command *cmd, t_minishell *minishell);
 int	run_builtin(t_command *cmd, t_minishell *minishell);
 int	is_valid_key(const char *key);
 int	builtin_echo(char **args);
@@ -156,7 +155,7 @@ int				get_token_len(t_token_type type);
 
 /*  Expander  */
 char *ft_strjoin_free(char *s1, char *s2);
-void expand_tokens(t_token *token_list, t_env *env_list);
+void expand_tokens(t_minishell *minishell, t_token *token_list, t_env *env_list);
 
 /*  Parser  */
 t_command *parse_command(t_token **tokens);

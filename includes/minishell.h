@@ -25,6 +25,7 @@
 # include <sys/ioctl.h>		//ioctl()
 # include <signal.h>		//signal()
 # include <sys/wait.h>		//waitpid()
+# include <errno.h>			//errno, perror()
 
 # include <curses.h>		// for tgetent(), tgetstr(), tputs()
 # include <term.h>			// for tgetent(), tgetstr(), tputs()
@@ -170,6 +171,8 @@ int set_redirection_fds(t_redirection *redir);
 int handle_heredoc(t_command *cmd);
 int pipe_safe(int pipe_fd[2]);
 pid_t fork_safe(void);
+void	print_and_exit(char *prefix, char *msg, int code);
+void	check_and_execute(t_command *cmd, t_minishell *minishell);
 
 /*	Test functions	*/
 void	print_tokens(t_token *tokens);

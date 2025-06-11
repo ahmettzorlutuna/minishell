@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static void setup_child_processes(t_command *cmd, int prev_fd, int pipe_fd[2], t_minishell *minishell)
+static void	setup_child_processes(t_command *cmd, int prev_fd, int pipe_fd[2], t_minishell *minishell)
 {
 	if (prev_fd != -1)
 	{
@@ -27,13 +27,7 @@ static void setup_child_processes(t_command *cmd, int prev_fd, int pipe_fd[2], t
 	}
 	if (set_redirection_fds(cmd->redirects) != 0)
 		exit(minishell->last_exit_code);
-	if (is_builtin(cmd->args[0]))
-		exit(run_builtin(cmd, minishell));
-	execve(resolve_path(cmd->args[0], minishell->env_list), cmd->args, minishell->env_array);
-	ft_putstr_fd("minishell: command not found: ", 2);
-	ft_putstr_fd(cmd->args[0], 2);
-	ft_putstr_fd("\n", 2);
-	exit(127);
+	check_and_execute(cmd, minishell);
 }
 
 static int handle_parent_process(pid_t pid, int prev_fd, int pipe_fd[2], t_command *cmd)

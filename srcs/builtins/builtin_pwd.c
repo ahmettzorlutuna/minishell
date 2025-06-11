@@ -14,7 +14,6 @@
 
 int	builtin_pwd(void)
 {
-	printf("pwddddddd\n");
 	char	cwd[PATH_MAX];
 
 	if (getcwd(cwd, sizeof(cwd)) == NULL)

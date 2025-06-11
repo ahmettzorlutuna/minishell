@@ -34,6 +34,8 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 				result = ft_strjoin_free(result, exit_status);
 				i++;
 			}
+			else if (token_value[i] == '\0' || (!ft_isalnum(token_value[i]) && token_value[i] != '_'))
+				result = ft_strjoin_free(result, ft_strdup("$"));
 			else
 			{
 				start = i;
@@ -41,7 +43,7 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 					i++;
 				variable_name = ft_substr(token_value, start, i - start);
 				variable_value = get_env_value(env_list, variable_name);
-				// Eğer variable bulunamazsa, geri dönüp birer harf azaltarak kontrol et
+
 				while (!variable_value && i > start && quote_type != NO_QUOTE)
 				{
 					i--;

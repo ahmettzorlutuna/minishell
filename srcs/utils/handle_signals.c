@@ -12,24 +12,40 @@
 
 #include "../includes/minishell.h"
 
-static void	quit_handler(int signum)
-{
-	(void)signum;
-	rl_redisplay();
-}
+int	g_signal_flag = 0;
 
-static void	interrupt_handler(int signum)
+static void sigint_handler(int sig)
 {
-	(void)signum;
-	g_signal_flag = 1;
+	(void)sig;
+	g_signal_flag = SIGINT;
+	rl_replace_line("", 0);
 	write(1, "\n", 1);
 	rl_on_new_line();
-	rl_replace_line("", 0);
 	rl_redisplay();
 }
 
-void	init_signal_handler(void)
+static void sigint_heredoc_handler(int sig)
 {
-	signal(SIGINT, interrupt_handler);
-	signal(SIGQUIT, quit_handler);
+	(void)sig;
+	g_signal_flag = SIGINT;
+	write(1, "\n", 1);
+	close(0);
+}
+
+void setup_interactive_signals(void)
+{
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void setup_heredoc_signals(void)
+{
+	signal(SIGINT, sigint_heredoc_handler);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void setup_default_signals(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 }

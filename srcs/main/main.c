@@ -12,8 +12,6 @@
 
 #include "../includes/minishell.h"
 
-volatile sig_atomic_t	g_signal_flag = 0;
-
 static void shell_loop(t_minishell *minishell)
 {
 	while (1)
@@ -37,7 +35,7 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argv;
 
-	init_signal_handler();
+	setup_interactive_signals();
 	minishell = ft_calloc(1, sizeof(t_minishell));
 	if (!minishell)
 		return (ft_putstr_fd("Error: Memory allocation failed\n",

@@ -32,7 +32,7 @@
 
 # include "../libft/libft.h"
 
-extern	volatile	sig_atomic_t g_signal_flag;
+extern	int g_signal_flag;
 
 //* ************************************************************************** */
 //* Enums
@@ -115,7 +115,9 @@ void	init_mini_data(t_minishell *minishell, char **envp);
 void	init_minishell(t_minishell *minishell);
 
 /*	Signal */
-void	init_signal_handler(void);
+void setup_interactive_signals(void);
+void setup_heredoc_signals(void);
+void setup_default_signals(void);
 
 /* Builtins */
 int	is_parent_builtin(char *cmd);
@@ -164,7 +166,6 @@ t_command *parse_command(t_token **tokens);
 /* Executor */
 char *ft_strjoin_three(const char *s1, const char *s2, const char *s3);
 void free_split(char **split);
-int is_path_executable(const char *path);
 void execute_pipeline(t_command *cmd, t_minishell *minishell);
 char *resolve_path(const char *cmd, t_env *env_list);
 int set_redirection_fds(t_redirection *redir);

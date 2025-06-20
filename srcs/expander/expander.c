@@ -18,6 +18,7 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 	char *new_result;
 	char *variable_name;
 	char *variable_value;
+	char *exit_status;
 	int start;
 	int i;
 
@@ -30,7 +31,7 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 			i++;
 			if (token_value[i] == '?')
 			{
-				char *exit_status = ft_itoa(minishell->last_exit_code);
+				exit_status = ft_itoa(minishell->last_exit_code);
 				result = ft_strjoin_free(result, exit_status);
 				i++;
 			}
@@ -43,7 +44,6 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 					i++;
 				variable_name = ft_substr(token_value, start, i - start);
 				variable_value = get_env_value(env_list, variable_name);
-
 				while (!variable_value && i > start && quote_type != NO_QUOTE)
 				{
 					i--;
@@ -52,8 +52,9 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 					variable_value = get_env_value(env_list, variable_name);
 				}
 				if (!variable_value)
-					variable_value = "";
-				result = ft_strjoin_free(result, variable_value);
+					result = ft_strjoin_free(result, ft_strdup(""));
+				else
+					result = ft_strjoin_free(result, variable_value);
 				free(variable_name);
 			}
 		}
@@ -61,6 +62,7 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 		{
 			new_result = ft_substr(token_value, i, 1);
 			result = ft_strjoin_free(result, new_result);
+			free(new_result);
 			i++;
 		}
 	}

@@ -30,7 +30,7 @@ static void	setup_child_processes(t_command *cmd, int prev_fd, int pipe_fd[2], t
 	check_and_execute(cmd, minishell);
 }
 
-static int handle_parent_process(pid_t pid, int prev_fd, int pipe_fd[2], t_command *cmd)
+static int handle_parent_process(int prev_fd, int pipe_fd[2], t_command *cmd)
 {
 	int status;
 
@@ -42,7 +42,7 @@ static int handle_parent_process(pid_t pid, int prev_fd, int pipe_fd[2], t_comma
 		close(pipe_fd[1]);
 		prev_fd = pipe_fd[0];
 	}
-	waitpid(pid, &status, 0);
+	//waitpid(pid, &status, 0);
 	return (status);
 }
 
@@ -72,11 +72,14 @@ static void execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
 				exit(1);
 			setup_child_processes(cmd, prev_fd, pipe_fd, minishell);
 		}
-		status = handle_parent_process(pid, prev_fd, pipe_fd, cmd);
+		status = handle_parent_process(prev_fd, pipe_fd, cmd);
 		if (cmd->next_pipe)
 			prev_fd = pipe_fd[0];
 		cmd = cmd->next_pipe;
 	}
+	waitpid(pid, &status, 0);
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
 	if (WIFEXITED(status))
 		minishell->last_exit_code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))

@@ -101,7 +101,11 @@ void check_and_execute(t_command *cmd, t_minishell *minishell)
 		exit(run_builtin(cmd, minishell));
 	path = resolve_path(cmd->args[0], minishell->env_list);
 	if (!path || path[0] == '\0')
+	{
+		if(!cmd->args[0])
+			cmd->args[0] = "$";
 		print_and_exit(cmd->args[0], "command not found", 127);
+	}
 	if (stat(path, &sb) != 0)
 	{
 		if (errno == ENOENT)

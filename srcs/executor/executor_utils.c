@@ -68,7 +68,6 @@ char *ft_strjoin_three(const char *s1, const char *s2, const char *s3)
 
 	if (!*s1 || !*s2 || !*s3)
 		return (NULL);
-
 	first = ft_strjoin(s1, s2);
 	if (!first)
 		return (NULL);

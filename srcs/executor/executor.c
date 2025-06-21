@@ -42,7 +42,6 @@ static int handle_parent_process(int prev_fd, int pipe_fd[2], t_command *cmd)
 		close(pipe_fd[1]);
 		prev_fd = pipe_fd[0];
 	}
-	//waitpid(pid, &status, 0);
 	return (status);
 }
 
@@ -90,8 +89,11 @@ static void execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
 
 void execute_pipeline(t_command *cmd, t_minishell *minishell)
 {
-	if (!cmd)
+	if (!cmd || !cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
+	{
+		minishell->last_exit_code = 0;
 		return;
+	}
 	if (!cmd->next_pipe && is_parent_builtin(cmd->args[0]))
 	{
 		if (handle_heredoc(cmd) != 0)

@@ -47,7 +47,8 @@ SRC	=	builtins/builtin_utils.c \
 		main/minishell.c \
 		parser/parser.c \
 		test/test_utils.c \
-		utils/handle_signals.c
+		utils/handle_signals.c \
+		utils/free_loop.c
 
 SRCS	= $(addprefix $(SRC_PATH), $(SRC))
 OBJ 	= $(SRC:.c=.o)

@@ -96,12 +96,12 @@ void execute_pipeline(t_command *cmd, t_minishell *minishell)
 	}
 	if (!cmd->next_pipe && is_parent_builtin(cmd->args[0]))
 	{
-		if (handle_heredoc(cmd) != 0)
+		if (set_redirection_fds(cmd->redirects) != 0)
 		{
 			minishell->last_exit_code = 1;
 			return;
 		}
-		if (set_redirection_fds(cmd->redirects) != 0)
+		if (handle_heredoc(cmd) != 0)
 		{
 			minishell->last_exit_code = 1;
 			return;

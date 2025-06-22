@@ -77,8 +77,6 @@ static void execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
 		cmd = cmd->next_pipe;
 	}
 	waitpid(pid, &status, 0);
-	close(pipe_fd[0]);
-	close(pipe_fd[1]);
 	if (WIFEXITED(status))
 		minishell->last_exit_code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))

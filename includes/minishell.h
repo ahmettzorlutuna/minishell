@@ -114,6 +114,10 @@ typedef	struct	s_minishell
 void	init_mini_data(t_minishell *minishell, char **envp);
 void	init_minishell(t_minishell *minishell);
 
+/* Free */
+void free_minishell(t_minishell *minishell);
+void free_loop(t_minishell *minishell);
+
 /*	Signal */
 void	setup_interactive_signals(void);
 void	setup_heredoc_signals(void);

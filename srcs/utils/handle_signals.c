@@ -28,7 +28,6 @@ static void sigint_heredoc_handler(int sig)
 {
 	(void)sig;
 	g_signal_flag = SIGINT;
-	write(1, "\n", 1);
 	close(0);
 }
 

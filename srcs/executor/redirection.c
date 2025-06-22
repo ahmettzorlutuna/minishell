@@ -28,21 +28,17 @@ int set_redirection_fds(t_redirection *redir)
 			fd = redir->fd;
 		else
 			return (1);
-
 		if (fd < 0)
 		{
 			perror(redir->filename);
 			return (1);
 		}
-
 		if (redir->type == TOKEN_REDIRECT_IN || redir->type == TOKEN_HEREDOC)
 			dup2(fd, STDIN_FILENO);
 		else
 			dup2(fd, STDOUT_FILENO);
-
 		if (redir->type != TOKEN_HEREDOC)
 			close(fd);
-
 		redir = redir->next;
 	}
 	return (0);

@@ -115,9 +115,9 @@ void	init_mini_data(t_minishell *minishell, char **envp);
 void	init_minishell(t_minishell *minishell);
 
 /*	Signal */
-void setup_interactive_signals(void);
-void setup_heredoc_signals(void);
-void setup_default_signals(void);
+void	setup_interactive_signals(void);
+void	setup_heredoc_signals(void);
+void	setup_default_signals(void);
 
 /* Builtins */
 int	is_parent_builtin(char *cmd);

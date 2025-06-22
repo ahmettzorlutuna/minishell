@@ -14,11 +14,7 @@
 
 void	exit_minishell(t_minishell *minishell)
 {
-	free_env_list(minishell->env_list);
-	free_env_array(minishell->env_array);
-	free_token_list(minishell->tokens);
-	free(minishell->input);
-	free(minishell);
+	free_minishell(minishell);
 	exit(minishell->last_exit_code);
 }
 
@@ -26,9 +22,10 @@ void	init_mini_data(t_minishell *minishell, char **envp)
 {
 	minishell->input = NULL;
 	minishell->tokens = NULL;
+	minishell->command_list = NULL;
+	minishell->last_exit_code = 0;
 	minishell->env_list = init_env_list(envp);
 	minishell->env_array = env_list_to_array(minishell->env_list);
-	minishell->last_exit_code = 0;
 }
 
 void init_minishell(t_minishell *minishell)
@@ -37,8 +34,6 @@ void init_minishell(t_minishell *minishell)
 	minishell->tokens = tokenizer(minishell->input);
 	expand_tokens(minishell, minishell->tokens, minishell->env_list);
 	minishell->command_list = parse_command(&minishell->tokens);
-	// print_tokens(minishell->tokens);
-	// print_parsed_command(minishell->command_list);
-	// print_command(minishell->command_list);	
 	execute_pipeline(minishell->command_list, minishell);
+	free_loop(minishell);
 }

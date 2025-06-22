@@ -32,7 +32,6 @@ static void shell_loop(t_minishell *minishell)
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*minishell;
-
 	(void)argv;
 
 	setup_interactive_signals();

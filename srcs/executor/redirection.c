@@ -34,9 +34,15 @@ int set_redirection_fds(t_redirection *redir)
 			return (1);
 		}
 		if (redir->type == TOKEN_REDIRECT_IN || redir->type == TOKEN_HEREDOC)
+		{
 			dup2(fd, STDIN_FILENO);
+			close(fd);
+		}
 		else
+		{
 			dup2(fd, STDOUT_FILENO);
+			close(fd);
+		}
 		if (redir->type != TOKEN_HEREDOC)
 			close(fd);
 		redir = redir->next;

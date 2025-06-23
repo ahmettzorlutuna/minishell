@@ -18,11 +18,11 @@ void free_token_list(t_token *head)
 
 	while (head)
 	{
-		tmp = head;
-		head = head->next;
-		if (tmp->value)
-			free(tmp->value);
-		free(tmp);
+		tmp = head->next;
+		if (head->value)
+			free(head->value);
+		free(head);
+		head = tmp;
 	}
 }
 

@@ -146,7 +146,6 @@ void	free_env_array(char **env_array);
 void	update_env_array(t_minishell *mini);
 void	free_env_list(t_env *env_list);
 void	free_env_array(char **env_array);
-void	exit_minishell(t_minishell *minishell);
 t_env	*sort_env_list(t_env *env);
 
 /*      Tokenizer      */
@@ -176,7 +175,7 @@ int set_redirection_fds(t_redirection *redir);
 int handle_heredoc(t_command *cmd);
 int pipe_safe(int pipe_fd[2]);
 pid_t fork_safe(void);
-void	print_and_exit(char *prefix, char *msg, int code);
+void	print_and_exit(t_minishell *minishell, char *prefix, char *msg, int code);
 void	check_and_execute(t_command *cmd, t_minishell *minishell);
 
 /*	Test functions	*/

@@ -12,12 +12,6 @@
 
 #include "../includes/minishell.h"
 
-void	exit_minishell(t_minishell *minishell)
-{
-	free_minishell(minishell);
-	exit(minishell->last_exit_code);
-}
-
 void	init_mini_data(t_minishell *minishell, char **envp)
 {
 	minishell->input = NULL;

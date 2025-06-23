@@ -50,19 +50,12 @@ static void free_command_list(t_command *cmd)
 
 void free_loop(t_minishell *minishell)
 {
-    if(minishell->input)
-        free(minishell->input);
+    free(minishell->input);
+	free_token_list(minishell->tokens);
+    free_command_list(minishell->command_list);
     minishell->input = NULL;
-    if(minishell->tokens)
-    {
-	    free_token_list(minishell->tokens);
-        minishell->tokens = NULL;
-    }
-    if(minishell->command_list)
-    {
-        free_command_list(minishell->command_list);
-        minishell->command_list = NULL;
-    }
+    minishell->command_list = NULL;
+    minishell->tokens = NULL;
 }
 
 void free_minishell(t_minishell *minishell)

@@ -20,7 +20,8 @@ static void shell_loop(t_minishell *minishell)
 		if (minishell->input == NULL)
 		{
 			ft_putstr_fd("exit\n", 0);
-			exit_minishell(minishell);
+			free_minishell(minishell);
+			exit(minishell->last_exit_code);
 		}
 		if(minishell->input && *minishell->input)
 		{
@@ -42,11 +43,12 @@ int	main(int argc, char **argv, char **envp)
 	if (argc != 1)
 	{
 		perror("No arguments expected for minishell");
-		free(minishell);
+		free_minishell(minishell);
 		exit(minishell->last_exit_code);
 	}
 	init_mini_data(minishell,envp);
 	shell_loop(minishell);
-	exit_minishell(minishell);
+	free_minishell(minishell);
+	exit(minishell->last_exit_code);
 	return (0);
 }

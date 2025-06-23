@@ -66,6 +66,8 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 			i++;
 		}
 	}
+	if(!result)
+		return (NULL);
 	return (result);
 }
 
@@ -79,7 +81,11 @@ void expand_tokens(t_minishell *minishell, t_token *token_list, t_env *env_list)
 		{
 			expanded_word = expand_word(minishell, token_list->quote, token_list->value, env_list);
 			if (!expanded_word)
+			{
+				free(token_list->value);
+				token_list->value = NULL;
 				return;
+			}
 			free(token_list->value);
 			token_list->value = expanded_word;
 		}

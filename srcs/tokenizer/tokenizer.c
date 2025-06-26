@@ -90,7 +90,7 @@ static char *get_combined_token(const char *input, int *i, t_quote_type *quote_o
 }
 
 
-t_token *tokenizer(char *input, t_minishell *minishell)
+t_token *tokenizer(char *input)
 {
 	t_token *token_list;
 	t_token *new_token;

@@ -64,12 +64,6 @@ TOKENİZER
 Bir kelimeyi/parçayı analiz edip, "hangi quote içinde mi?", "kelime ne?" gibi bilgileri geçici olarak tutar.
 Kelimeyi (ve varsa tırnak bilgisini) doğru şekilde çıkarıp geri döndürmek için
 */
-typedef struct s_word_info
-{
-	char *value;
-	t_quote_type quote;
-} t_word_info;
-
 typedef struct s_token
 {
 	t_token_type type;

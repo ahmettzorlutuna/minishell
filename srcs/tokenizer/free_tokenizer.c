@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-void free_token_list(t_token *head)
+void	free_token_list(t_token *head)
 {
 	t_token *tmp;
 
@@ -25,4 +25,3 @@ void free_token_list(t_token *head)
 		head = tmp;
 	}
 }
-

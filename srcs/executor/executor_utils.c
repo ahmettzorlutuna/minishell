@@ -86,7 +86,6 @@ void print_and_exit(t_minishell *minishell, char *prefix, char *msg, int code)
 	}
 	ft_putstr_fd(msg, 2);
 	ft_putchar_fd('\n', 2);
-	free_loop(minishell);
 	free_minishell(minishell);
 	exit(code);
 }
@@ -104,7 +103,10 @@ void check_and_execute(t_command *cmd, t_minishell *minishell)
 	if (!path || path[0] == '\0')
 	{
 		if(!cmd->args[0])
-			cmd->args[0] = "$";
+		{
+			free(cmd->args[0]);
+			cmd->args[0] = ft_strdup("$");
+		}
 		print_and_exit(minishell, cmd->args[0], "command not found", 127);
 	}
 	if (stat(path, &sb) != 0)

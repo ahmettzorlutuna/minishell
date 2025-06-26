@@ -128,6 +128,5 @@ t_token *tokenizer(char *input)
 			add_token(&token_list, new_token);
 		}
 	}
-	add_token(&token_list, create_token(TOKEN_EOF, NULL, word_info.quote));
 	return (token_list);
 }

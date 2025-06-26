@@ -19,6 +19,7 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 	char *variable_name;
 	char *variable_value;
 	char *exit_status;
+	char *temp;
 	int start;
 	int i;
 
@@ -36,7 +37,11 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 				i++;
 			}
 			else if (token_value[i] == '\0' || (!ft_isalnum(token_value[i]) && token_value[i] != '_'))
-				result = ft_strjoin_free(result, ft_strdup("$"));
+			{
+				temp = ft_strdup("$");
+				result = ft_strjoin_free(result, temp);
+				free(temp);
+			}
 			else
 			{
 				start = i;
@@ -52,7 +57,12 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 					variable_value = get_env_value(env_list, variable_name);
 				}
 				if (!variable_value)
-					result = ft_strjoin_free(result, ft_strdup(""));
+				{
+					temp = ft_strdup("");
+					result = ft_strjoin_free(result, temp);
+					free(variable_value);
+					free(temp);
+				}
 				else
 					result = ft_strjoin_free(result, variable_value);
 				free(variable_name);
@@ -61,6 +71,11 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 		else
 		{
 			new_result = ft_substr(token_value, i, 1);
+			if(!new_result)
+			{
+				free(result);
+				return (NULL);
+			}
 			result = ft_strjoin_free(result, new_result);
 			free(new_result);
 			i++;

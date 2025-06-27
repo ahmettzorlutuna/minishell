@@ -90,7 +90,7 @@ static char *get_combined_token(const char *input, int *i, t_quote_type *quote_o
 }
 
 
-t_token *tokenizer(char *input)
+t_token *tokenizer(char *input, t_minishell *minishell)
 {
 	t_token *token_list;
 	t_token *new_token;
@@ -120,10 +120,16 @@ t_token *tokenizer(char *input)
 		{
 			word_value = get_combined_token(input, &i, &quote);
 			if (!word_value)
+			{
+				free_token_list(token_list);
 				return (NULL);
+			}
 			new_token = create_token(TOKEN_WORD, word_value, quote);
 			if (!new_token)
+			{
+				free_token_list(minishell->tokens);
 				return (NULL);
+			}
 			add_token(&token_list, new_token);
 		}
 	}

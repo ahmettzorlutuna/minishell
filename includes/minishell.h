@@ -143,7 +143,7 @@ void	free_env_array(char **env_array);
 t_env	*sort_env_list(t_env *env);
 
 /*      Tokenizer      */
-t_token			*tokenizer(char *input);
+t_token			*tokenizer(char *input, t_minishell *minishell);
 t_token	*create_token(t_token_type type, char *value, t_quote_type quote);
 void			add_token(t_token **head, t_token *new_token);
 void			free_token_list(t_token *head);
@@ -169,7 +169,7 @@ int set_redirection_fds(t_redirection *redir);
 int handle_heredoc(t_command *cmd);
 int pipe_safe(int pipe_fd[2]);
 pid_t fork_safe(void);
-void	print_and_exit(t_minishell *minishell, char *prefix, char *msg, int code);
+void	print_and_exit(char *prefix, char *msg, int code);
 void	check_and_execute(t_command *cmd, t_minishell *minishell);
 
 /*	Test functions	*/

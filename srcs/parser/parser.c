@@ -34,24 +34,23 @@ static char **list_to_array(t_list *args)
 	return (result);
 }
 
-static int parse_redirection(t_token **tokens, t_command *cmd)
+static int parse_redirection(t_token *cursor, t_command *cmd)
 {
-	t_redirection *redir;
-	t_redirection **redir_ptr;
+	if (!cursor->next || cursor->next->type != TOKEN_WORD)
+		return (1);
 
-	if (!(*tokens)->next || (*tokens)->next->type != TOKEN_WORD)
-		return (1); // Syntax error.
-	redir = ft_calloc(1, sizeof(t_redirection));
+	t_redirection *redir = ft_calloc(1, sizeof(t_redirection));
 	if (!redir)
 		return (1);
 	redir->fd = -1;
-	redir->type = (*tokens)->type;
-	redir->filename = ft_strdup((*tokens)->next->value);
-	redir_ptr = &cmd->redirects;
+	redir->type = cursor->type;
+	redir->filename = ft_strdup(cursor->next->value);
+
+	t_redirection **redir_ptr = &cmd->redirects;
 	while (*redir_ptr)
 		redir_ptr = &(*redir_ptr)->next;
 	*redir_ptr = redir;
-	(*tokens) = (*tokens)->next;
+
 	return (0);
 }
 
@@ -75,6 +74,7 @@ t_command *parse_command(t_token **tokens)
 {
 	t_command *cmd;
 	t_list *args;
+	t_token *cursor;
 
 	cmd = ft_calloc(1, sizeof(t_command));
 	if (!cmd)
@@ -83,24 +83,26 @@ t_command *parse_command(t_token **tokens)
 		return NULL;
 	}
 	args = NULL;
-	while (*tokens && (*tokens)->type != TOKEN_PIPE && (*tokens)->type != TOKEN_EOF)
+	cursor = *tokens;
+	while (cursor && cursor->type != TOKEN_PIPE && cursor->type != TOKEN_EOF)
 	{
-		if ((*tokens) && (*tokens)->type == TOKEN_WORD)
-			add_arg_to_list(&args, (*tokens)->value);
-		else if ((*tokens) && ((*tokens)->type == TOKEN_REDIRECT_IN ||
-							   (*tokens)->type == TOKEN_REDIRECT_OUT ||
-							   (*tokens)->type == TOKEN_HEREDOC ||
-							   (*tokens)->type == TOKEN_APPEND))
+		if (cursor->type == TOKEN_WORD)
+			add_arg_to_list(&args, cursor->value);
+		else if (cursor && (cursor->type == TOKEN_REDIRECT_IN ||
+							   cursor->type == TOKEN_REDIRECT_OUT ||
+							   cursor->type == TOKEN_HEREDOC ||
+							   cursor->type == TOKEN_APPEND))
 		{
-			if (parse_redirection(tokens, cmd))
+			if(parse_redirection(cursor, cmd))
 				return (NULL);
+			cursor = cursor->next;
 		}
-		(*tokens) = (*tokens)->next;
+		cursor = cursor->next;
 	}
-	if ((*tokens) && (*tokens)->type == TOKEN_PIPE)
+	if (cursor && cursor->type == TOKEN_PIPE)
 	{
-		*tokens = (*tokens)->next;
-		cmd->next_pipe = parse_command(tokens);
+		cursor = cursor->next;
+		cmd->next_pipe = parse_command(&cursor);
 	}
 	cmd->args = list_to_array(args);
 	ft_lstclear(&args, free);

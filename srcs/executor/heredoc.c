@@ -39,9 +39,8 @@ int run_heredoc_child(const char *delimiter, int write_fd)
 			free(line);
 			break;
 		}
-		buffer = ft_strjoin(buffer, line);
-		buffer = ft_strjoin(buffer, "\n");
-		free(line);
+		buffer = ft_strjoin_free(buffer, line);
+		buffer = ft_strjoin_free(buffer, "\n");
 	}
 
 	if(g_signal_flag != SIGINT)

@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static void	setup_child_processes(t_command *cmd, int prev_fd, int pipe_fd[2], t_minishell *minishell)
+static void setup_child_processes(t_command *cmd, int prev_fd, int pipe_fd[2], t_minishell *minishell)
 {
 	if (prev_fd != -1)
 	{
@@ -89,6 +89,14 @@ void execute_pipeline(t_command *cmd, t_minishell *minishell)
 {
 	if (!cmd || !cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
 	{
+		if (cmd && cmd->redirects)
+		{
+			if (create_empty_redirect_files(cmd->redirects) != 0)
+			{
+				minishell->last_exit_code = 1;
+				return;
+			}
+		}
 		minishell->last_exit_code = 0;
 		return;
 	}

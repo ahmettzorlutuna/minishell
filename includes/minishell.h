@@ -166,6 +166,7 @@ void free_split(char **split);
 void execute_pipeline(t_command *cmd, t_minishell *minishell);
 char *resolve_path(const char *cmd, t_env *env_list);
 int set_redirection_fds(t_redirection *redir);
+int create_empty_redirect_files(t_redirection *redir);
 int handle_heredoc(t_command *cmd);
 int pipe_safe(int pipe_fd[2]);
 pid_t fork_safe(void);

@@ -12,18 +12,17 @@
 
 #include "../includes/minishell.h"
 
-char *resolve_path(const char *cmd, t_env *env_list)
+char	*resolve_path(const char *cmd, t_env *env_list)
 {
-	char **paths;
-	char *path_value;
-	char *temp_path;
-	int i;
+	char	**paths;
+	char	*path_value;
+	char	*temp_path;
+	int		i;
 
 	if (!cmd || !*cmd)
 		return (NULL);
 	if (ft_strchr(cmd, '/'))
 		return (ft_strdup(cmd));
-
 	path_value = get_env_value(env_list, "PATH");
 	if (!path_value)
 		return (NULL);
@@ -46,12 +45,12 @@ char *resolve_path(const char *cmd, t_env *env_list)
 	return (NULL);
 }
 
-void free_split(char **split)
+void	free_split(char **split)
 {
-	int i;
+	int	i;
 
 	if (!split)
-		return;
+		return ;
 	i = 0;
 	while (split[i])
 	{
@@ -61,10 +60,10 @@ void free_split(char **split)
 	free(split);
 }
 
-char *ft_strjoin_three(const char *s1, const char *s2, const char *s3)
+char	*ft_strjoin_three(const char *s1, const char *s2, const char *s3)
 {
-	char *first;
-	char *full;
+	char	*first;
+	char	*full;
 
 	if (!*s1 || !*s2 || !*s3)
 		return (NULL);
@@ -76,7 +75,7 @@ char *ft_strjoin_three(const char *s1, const char *s2, const char *s3)
 	return (full);
 }
 
-void print_and_exit(char *prefix, char *msg, int code)
+void	print_and_exit(char *prefix, char *msg, int code)
 {
 	ft_putstr_fd("minishell: ", 2);
 	if (prefix)
@@ -89,10 +88,10 @@ void print_and_exit(char *prefix, char *msg, int code)
 	exit(code);
 }
 
-void check_and_execute(t_command *cmd, t_minishell *minishell)
+void	check_and_execute(t_command *cmd, t_minishell *minishell)
 {
-	char *path;
-	struct stat sb;
+	char		*path;
+	struct stat	sb;
 
 	if (!cmd->args[0] || cmd->args[0][0] == '\0')
 		exit(0);
@@ -101,7 +100,7 @@ void check_and_execute(t_command *cmd, t_minishell *minishell)
 	path = resolve_path(cmd->args[0], minishell->env_list);
 	if (!path || path[0] == '\0')
 	{
-		if(!cmd->args[0])
+		if (!cmd->args[0])
 		{
 			free(cmd->args[0]);
 			cmd->args[0] = ft_strdup("$");

@@ -12,9 +12,9 @@
 
 #include "../includes/minishell.h"
 
-int pipe_safe(int pipe_fd[2])
+int	pipe_safe(int pipe_fd[2])
 {
-	if(pipe(pipe_fd) == -1)
+	if (pipe(pipe_fd) == -1)
 	{
 		perror("pipe error");
 		return (1);
@@ -22,12 +22,12 @@ int pipe_safe(int pipe_fd[2])
 	return (0);
 }
 
-pid_t fork_safe(void)
+pid_t	fork_safe(void)
 {
-	pid_t pid;
+	pid_t	pid;
 
 	pid = fork();
-	if(pid == -1)
+	if (pid == -1)
 		perror("fork error");
 	return (pid);
 }

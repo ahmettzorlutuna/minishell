@@ -22,7 +22,7 @@ void	init_mini_data(t_minishell *minishell, char **envp)
 	minishell->env_array = env_list_to_array(minishell->env_list);
 }
 
-void init_minishell(t_minishell *minishell)
+void	init_minishell(t_minishell *minishell)
 {
 	add_history(minishell->input);
 	free_token_list(minishell->tokens);

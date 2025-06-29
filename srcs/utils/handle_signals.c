@@ -14,7 +14,7 @@
 
 int	g_signal_flag = 0;
 
-static void sigint_handler(int sig)
+static	void	sigint_handler(int sig)
 {
 	(void)sig;
 	g_signal_flag = SIGINT;
@@ -24,26 +24,26 @@ static void sigint_handler(int sig)
 	rl_redisplay();
 }
 
-static void sigint_heredoc_handler(int sig)
+static	void	sigint_heredoc_handler(int sig)
 {
 	(void)sig;
 	g_signal_flag = SIGINT;
 	close(0);
 }
 
-void setup_interactive_signals(void)
+void	setup_interactive_signals(void)
 {
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void setup_heredoc_signals(void)
+void	setup_heredoc_signals(void)
 {
 	signal(SIGINT, sigint_heredoc_handler);
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void setup_default_signals(void)
+void	setup_default_signals(void)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);

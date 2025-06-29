@@ -12,61 +12,61 @@
 
 #include "../includes/minishell.h"
 
-static void free_redirections(t_redirection *redir)
+static	void	free_redirections(t_redirection *redir)
 {
-    t_redirection *tmp;
+	t_redirection	*tmp;
 
-    while (redir)
-    {
-        tmp = redir->next;
-        if(redir->filename)
-            free(redir->filename);
-        free(redir);
-        redir = tmp;
-    }
+	while (redir)
+	{
+		tmp = redir->next;
+		if (redir->filename)
+			free(redir->filename);
+		free(redir);
+		redir = tmp;
+	}
 }
 
-static void free_command_list(t_command *cmd)
+static	void	free_command_list(t_command *cmd)
 {
-    t_command *tmp;
-    int i;
+	t_command	*tmp;
+	int			i;
 
-    while(cmd)
-    {
-        tmp = cmd->next_pipe;
-        if(cmd->args)
-        {
-            i = 0;
-            while (cmd->args[i])
-                free(cmd->args[i++]);
-            free(cmd->args);
-        }
-        if(cmd->redirects)
-            free_redirections(cmd->redirects);
-        free(cmd);
-        cmd = tmp;
-    }
+	while (cmd)
+	{
+		tmp = cmd->next_pipe;
+		if (cmd->args)
+		{
+			i = 0;
+			while (cmd->args[i])
+				free(cmd->args[i++]);
+			free(cmd->args);
+		}
+		if (cmd->redirects)
+			free_redirections(cmd->redirects);
+		free(cmd);
+		cmd = tmp;
+	}
 }
 
-void free_loop(t_minishell *minishell)
+void	free_loop(t_minishell *minishell)
 {
-    free(minishell->input);
-    if(minishell->tokens)
-    {
-        free_token_list(minishell->tokens);
-        minishell->tokens = NULL;
-    }
-    free_command_list(minishell->command_list);
-    minishell->input = NULL;
-    minishell->tokens = NULL;
-    minishell->command_list = NULL;
+	free(minishell->input);
+	if (minishell->tokens)
+	{
+		free_token_list(minishell->tokens);
+		minishell->tokens = NULL;
+	}
+	free_command_list(minishell->command_list);
+	minishell->input = NULL;
+	minishell->tokens = NULL;
+	minishell->command_list = NULL;
 }
 
-void free_minishell(t_minishell *minishell)
+void	free_minishell(t_minishell *minishell)
 {
-    if(minishell->env_array)
-	    free_env_array(minishell->env_array);
-    if(minishell->env_list)
-        free_env_list(minishell->env_list);
-    free(minishell);
+	if (minishell->env_array)
+		free_env_array(minishell->env_array);
+	if (minishell->env_list)
+		free_env_list(minishell->env_list);
+	free(minishell);
 }

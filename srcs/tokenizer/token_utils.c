@@ -12,20 +12,22 @@
 
 #include "../includes/minishell.h"
 
-int is_whitespace(char c)
+int	is_whitespace(char c)
 {
-	return (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\v' || c == '\f');
+	return (c == ' ' || c == '\t'
+		|| c == '\n' || c == '\r'
+		|| c == '\v' || c == '\f');
 }
 
-int is_operator(char c)
+int	is_operator(char c)
 {
 	return (c == '|' || c == '<' || c == '>');
 }
 
-char *get_word(const char *input, int *i)
+char	*get_word(const char *input, int *i)
 {
-	int start;
-	int len;
+	int	start;
+	int	len;
 
 	start = *i;
 	len = 0;
@@ -37,7 +39,7 @@ char *get_word(const char *input, int *i)
 	return (ft_substr(input, start, len));
 }
 
-t_token_type get_operator_type(const char *input)
+t_token_type	get_operator_type(const char *input)
 {
 	if (input[0] == '<' && input[1] == '<')
 		return (TOKEN_HEREDOC);
@@ -52,9 +54,11 @@ t_token_type get_operator_type(const char *input)
 	return (TOKEN_EOF);
 }
 
-int get_token_len(t_token_type type)
+int	get_token_len(t_token_type type)
 {
-	if (type == TOKEN_REDIRECT_IN || type == TOKEN_REDIRECT_OUT || type == TOKEN_PIPE)
+	if (type == TOKEN_REDIRECT_IN
+		|| type == TOKEN_REDIRECT_OUT
+		|| type == TOKEN_PIPE)
 		return (1);
 	if (type == TOKEN_HEREDOC || type == TOKEN_APPEND)
 		return (2);

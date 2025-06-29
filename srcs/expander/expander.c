@@ -33,7 +33,9 @@ static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *
 			if (token_value[i] == '?')
 			{
 				exit_status = ft_itoa(minishell->last_exit_code);
-				result = ft_strjoin_free(result, exit_status);
+				free(result);
+				result = ft_strjoin(result, exit_status);
+				free(exit_status);
 				i++;
 			}
 			else if (token_value[i] == '\0' || (!ft_isalnum(token_value[i]) && token_value[i] != '_'))

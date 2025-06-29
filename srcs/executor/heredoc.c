@@ -27,7 +27,9 @@ int run_heredoc_child(const char *delimiter, int write_fd)
 		if (!line)
 		{
 			free(buffer);
-			exit(130);
+			if (g_signal_flag == SIGINT)
+				exit(130);
+			exit(0);
 		}
 		if (!delimiter || ft_strcmp(line, delimiter) == 0)
 		{

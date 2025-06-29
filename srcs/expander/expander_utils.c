@@ -12,9 +12,10 @@
 
 #include "../includes/minishell.h"
 
-char *ft_strjoin_free(char *s1, char *s2)
+char	*ft_strjoin_free(char *s1, char *s2)
 {
-	char *new;
+	char	*new;
+
 	new = ft_strjoin(s1, s2);
 	free(s1);
 	return (new);

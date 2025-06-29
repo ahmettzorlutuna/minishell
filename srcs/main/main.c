@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static void shell_loop(t_minishell *minishell)
+static	void	shell_loop(t_minishell *minishell)
 {
 	while (1)
 	{
@@ -23,7 +23,7 @@ static void shell_loop(t_minishell *minishell)
 			free_minishell(minishell);
 			exit(minishell->last_exit_code);
 		}
-		if(minishell->input && *minishell->input)
+		if (minishell->input && *minishell->input)
 		{
 			init_minishell(minishell);
 		}
@@ -33,8 +33,8 @@ static void shell_loop(t_minishell *minishell)
 int	main(int argc, char **argv, char **envp)
 {
 	t_minishell	*minishell;
-	(void)argv;
 
+	(void)argv;
 	setup_interactive_signals();
 	minishell = (t_minishell *)malloc(sizeof(t_minishell));
 	if (!minishell)
@@ -46,7 +46,7 @@ int	main(int argc, char **argv, char **envp)
 		free_minishell(minishell);
 		exit(minishell->last_exit_code);
 	}
-	init_mini_data(minishell,envp);
+	init_mini_data(minishell, envp);
 	shell_loop(minishell);
 	free_minishell(minishell);
 	return (0);

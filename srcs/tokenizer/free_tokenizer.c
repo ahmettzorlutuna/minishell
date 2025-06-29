@@ -12,17 +12,18 @@
 
 #include "../includes/minishell.h"
 
-void free_token_list(t_token *head)
+void	free_token_list(t_token *head)
 {
-    t_token *tmp;
-    int count = 0;
+	t_token	*tmp;
+	int		count;
 
-    while (head)
-    {
-        tmp = head->next;
-        free(head->value);
-        free(head);
-        head = tmp;
-        count++;
-    }
+	count = 0;
+	while (head)
+	{
+		tmp = head->next;
+		free(head->value);
+		free(head);
+		head = tmp;
+		count++;
+	}
 }

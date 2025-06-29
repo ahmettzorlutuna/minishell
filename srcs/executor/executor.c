@@ -53,9 +53,8 @@ static void execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
 	int status;
 
 	status = 0;
-	if (handle_heredoc(cmd) != 0)
+	if (handle_heredoc(cmd, minishell) != 0)
 	{
-		minishell->last_exit_code = 1;
 		return;
 	}
 	while (cmd)
@@ -67,9 +66,14 @@ static void execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
 			return;
 		else if (pid == 0)
 		{
+			setup_default_signals();
 			if (set_redirection_fds(cmd->redirects) != 0)
 				exit(1);
 			setup_child_processes(cmd, prev_fd, pipe_fd, minishell);
+		}
+		else
+		{
+			signal(SIGINT, SIG_IGN);
 		}
 		status = handle_parent_process(prev_fd, pipe_fd, cmd);
 		if (cmd->next_pipe)
@@ -77,10 +81,15 @@ static void execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
 		cmd = cmd->next_pipe;
 	}
 	waitpid(pid, &status, 0);
+	setup_interactive_signals();
 	if (WIFEXITED(status))
 		minishell->last_exit_code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
+	{
 		minishell->last_exit_code = 128 + WTERMSIG(status);
+		if(WTERMSIG(status) == SIGINT)
+			write(1,"\n",1);
+	}
 	else
 		minishell->last_exit_code = 1;
 }
@@ -103,11 +112,6 @@ void execute_pipeline(t_command *cmd, t_minishell *minishell)
 	if (!cmd->next_pipe && is_parent_builtin(cmd->args[0]))
 	{
 		if (set_redirection_fds(cmd->redirects) != 0)
-		{
-			minishell->last_exit_code = 1;
-			return;
-		}
-		if (handle_heredoc(cmd) != 0)
 		{
 			minishell->last_exit_code = 1;
 			return;

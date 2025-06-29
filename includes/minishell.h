@@ -116,6 +116,8 @@ void free_loop(t_minishell *minishell);
 void	setup_interactive_signals(void);
 void	setup_heredoc_signals(void);
 void	setup_default_signals(void);
+void	enable_echoctl(struct termios *old_term);
+void	restore_terminal(struct termios *old_term);
 
 /* Builtins */
 int	is_parent_builtin(char *cmd);

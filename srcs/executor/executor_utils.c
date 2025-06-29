@@ -119,7 +119,6 @@ void check_and_execute(t_command *cmd, t_minishell *minishell)
 		print_and_exit(path, "Is a directory", 126);
 	if (access(path, X_OK) != 0)
 		print_and_exit(path, "Permission denied", 126);
-	setup_default_signals();
 	execve(path, cmd->args, minishell->env_array);
 	perror("minishell");
 	if (errno == EACCES)

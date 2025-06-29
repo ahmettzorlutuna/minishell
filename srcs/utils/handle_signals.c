@@ -27,8 +27,8 @@ static void sigint_handler(int sig)
 static void sigint_heredoc_handler(int sig)
 {
 	(void)sig;
-	g_signal_flag = SIGINT;
 	close(0);
+	g_signal_flag = SIGINT;
 }
 
 void setup_interactive_signals(void)

@@ -12,12 +12,12 @@
 
 #include "../includes/minishell.h"
 
-static char **list_to_array(t_list *args)
+static	char	**list_to_array(t_list *args)
 {
-	int count;
-	char **result;
-	t_list *tmp;
-	int i;
+	int		count;
+	char	**result;
+	t_list	*tmp;
+	int		i;
 
 	count = ft_lstsize(args);
 	result = malloc(sizeof(char *) * (count + 1));
@@ -34,29 +34,29 @@ static char **list_to_array(t_list *args)
 	return (result);
 }
 
-static int parse_redirection(t_token *cursor, t_command *cmd)
+static	int	parse_redirection(t_token *cursor, t_command *cmd)
 {
+	t_redirection	*redir;
+	t_redirection	**redir_ptr;
+
 	if (!cursor->next || cursor->next->type != TOKEN_WORD)
 		return (1);
-
-	t_redirection *redir = ft_calloc(1, sizeof(t_redirection));
+	redir = ft_calloc(1, sizeof(t_redirection));
 	if (!redir)
 		return (1);
 	redir->fd = -1;
 	redir->type = cursor->type;
 	redir->filename = ft_strdup(cursor->next->value);
-
-	t_redirection **redir_ptr = &cmd->redirects;
+	redir_ptr = &cmd->redirects;
 	while (*redir_ptr)
 		redir_ptr = &(*redir_ptr)->next;
 	*redir_ptr = redir;
-
 	return (0);
 }
 
-static int add_arg_to_list(t_list **args, char *value)
+static	int	add_arg_to_list(t_list **args, char *value)
 {
-	t_list *new_node;
+	t_list	*new_node;
 
 	if (!value || !*value)
 		return (0);
@@ -70,17 +70,17 @@ static int add_arg_to_list(t_list **args, char *value)
 	return (0);
 }
 
-t_command *parse_command(t_token **tokens)
+t_command	*parse_command(t_token **tokens)
 {
-	t_command *cmd;
-	t_list *args;
-	t_token *cursor;
+	t_command	*cmd;
+	t_list		*args;
+	t_token		*cursor;
 
 	cmd = ft_calloc(1, sizeof(t_command));
 	if (!cmd)
 	{
 		perror("Error allocating memory for command");
-		return NULL;
+		return (NULL);
 	}
 	args = NULL;
 	cursor = *tokens;
@@ -88,12 +88,12 @@ t_command *parse_command(t_token **tokens)
 	{
 		if (cursor->type == TOKEN_WORD)
 			add_arg_to_list(&args, cursor->value);
-		else if (cursor && (cursor->type == TOKEN_REDIRECT_IN ||
-							   cursor->type == TOKEN_REDIRECT_OUT ||
-							   cursor->type == TOKEN_HEREDOC ||
-							   cursor->type == TOKEN_APPEND))
+		else if (cursor && (cursor->type == TOKEN_REDIRECT_IN
+				|| cursor->type == TOKEN_REDIRECT_OUT
+				|| cursor->type == TOKEN_HEREDOC
+				|| cursor->type == TOKEN_APPEND))
 		{
-			if(parse_redirection(cursor, cmd))
+			if (parse_redirection(cursor, cmd))
 				return (NULL);
 			cursor = cursor->next;
 		}

@@ -46,7 +46,6 @@ SRC	=	builtins/builtin_utils.c \
 		main/main.c \
 		main/minishell.c \
 		parser/parser.c \
-		test/test_utils.c \
 		utils/handle_signals.c \
 		utils/free_loop.c
 

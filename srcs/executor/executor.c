@@ -12,7 +12,8 @@
 
 #include "../includes/minishell.h"
 
-static void setup_child_processes(t_command *cmd, int prev_fd, int pipe_fd[2], t_minishell *minishell)
+static	void	setup_child_processes(t_command *cmd,
+					int prev_fd, int pipe_fd[2], t_minishell *minishell)
 {
 	if (prev_fd != -1)
 	{
@@ -30,9 +31,9 @@ static void setup_child_processes(t_command *cmd, int prev_fd, int pipe_fd[2], t
 	check_and_execute(cmd, minishell);
 }
 
-static int handle_parent_process(int prev_fd, int pipe_fd[2], t_command *cmd)
+static	int	handle_parent_process(int prev_fd, int pipe_fd[2], t_command *cmd)
 {
-	int status;
+	int	status;
 
 	status = 0;
 	if (prev_fd != -1)
@@ -45,82 +46,54 @@ static int handle_parent_process(int prev_fd, int pipe_fd[2], t_command *cmd)
 	return (status);
 }
 
-static void execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
+int	process_pipeline_command(t_command *cmd,
+						t_minishell *minishell, int *prev_fd)
 {
-	int pipe_fd[2];
-	int prev_fd = -1;
-	pid_t pid;
-	int status;
+	int		pipe_fd[2];
+	pid_t	pid;
+	int		status;
 
 	status = 0;
-	if (handle_heredoc(cmd, minishell) != 0)
+	if (cmd->next_pipe && pipe_safe(pipe_fd))
+		return (-1);
+	pid = fork_safe();
+	if (pid == -1)
+		return (-1);
+	else if (pid == 0)
 	{
-		return;
+		setup_default_signals();
+		if (set_redirection_fds(cmd->redirects) != 0)
+			exit(1);
+		setup_child_processes(cmd, *prev_fd, pipe_fd, minishell);
 	}
-	while (cmd)
-	{
-		if (cmd->next_pipe && pipe_safe(pipe_fd))
-			return;
-		pid = fork_safe();
-		if (pid == -1)
-			return;
-		else if (pid == 0)
-		{
-			setup_default_signals();
-			if (set_redirection_fds(cmd->redirects) != 0)
-				exit(1);
-			setup_child_processes(cmd, prev_fd, pipe_fd, minishell);
-		}
-		else
-		{
-			signal(SIGINT, SIG_IGN);
-		}
-		status = handle_parent_process(prev_fd, pipe_fd, cmd);
-		if (cmd->next_pipe)
-			prev_fd = pipe_fd[0];
-		cmd = cmd->next_pipe;
-	}
-	waitpid(pid, &status, 0);
+	else
+		signal(SIGINT, SIG_IGN);
+	status = handle_parent_process(*prev_fd, pipe_fd, cmd);
+	if (cmd->next_pipe)
+		*prev_fd = pipe_fd[0];
+	return (pid);
+}
+
+void	finalize_pipeline_status(int status, t_minishell *minishell)
+{
 	setup_interactive_signals();
 	if (WIFEXITED(status))
 		minishell->last_exit_code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 	{
 		minishell->last_exit_code = 128 + WTERMSIG(status);
-		if(WTERMSIG(status) == SIGINT)
-			write(1,"\n",1);
+		if (WTERMSIG(status) == SIGINT)
+			write(1, "\n", 1);
 	}
 	else
 		minishell->last_exit_code = 1;
 }
 
-void execute_pipeline(t_command *cmd, t_minishell *minishell)
+void	execute_pipeline(t_command *cmd, t_minishell *minishell)
 {
-	if (!cmd || !cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
-	{
-		if (cmd && cmd->redirects)
-		{
-			if (create_empty_redirect_files(cmd->redirects) != 0)
-			{
-				minishell->last_exit_code = 1;
-				return;
-			}
-		}
-		minishell->last_exit_code = 0;
-		return;
-	}
-	if (!cmd->next_pipe && is_parent_builtin(cmd->args[0]))
-	{
-		if (set_redirection_fds(cmd->redirects) != 0)
-		{
-			minishell->last_exit_code = 1;
-			return;
-		}
-		minishell->last_exit_code = run_builtin(cmd, minishell);
-		return;
-	}
-	else
-	{
-		execute_pipeline_fork(cmd, minishell);
-	}
+	if (empty_or_null_command(cmd, minishell))
+		return ;
+	if (run_parent_builtin_if_needed(cmd, minishell))
+		return ;
+	execute_pipeline_fork(cmd, minishell);
 }

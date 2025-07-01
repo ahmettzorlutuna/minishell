@@ -19,9 +19,9 @@ void	free_env_list(t_env *env_list)
 	while (env_list)
 	{
 		tmp = env_list->next;
-		if(env_list->key)
+		if (env_list->key)
 			free(env_list->key);
-		if(env_list->value)
+		if (env_list->value)
 			free(env_list->value);
 		free(env_list);
 		env_list = tmp;

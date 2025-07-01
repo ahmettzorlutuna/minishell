@@ -37,53 +37,46 @@ void	unset_env_value(t_env **env_list, const char *key)
 	}
 }
 
+static t_env	*create_new_env_node(const char *key, const char *value)
+{
+	t_env	*new_node;
+
+	new_node = (t_env *)malloc(sizeof(t_env));
+	if (!new_node)
+		return (NULL);
+	new_node->key = ft_strdup(key);
+	new_node->value = ft_strdup(value);
+	new_node->next = NULL;
+	return (new_node);
+}
+
 void	set_env_value(t_env **env_list, const char *key, const char *value)
 {
 	t_env	*tmp;
 	t_env	*new_node;
 
-	// Eğer varsa güncelle
 	tmp = *env_list;
 	while (tmp)
 	{
 		if (tmp->key && ft_strcmp(tmp->key, key) == 0)
 		{
-			free(tmp->value);
-			tmp->value = ft_strdup(value);
+			update_existing_key(tmp, value);
 			return ;
 		}
 		tmp = tmp->next;
 	}
-
-	// Yoksa sona ekle
-	new_node = (t_env *)malloc(sizeof(t_env));
+	new_node = create_new_env_node(key, value);
 	if (!new_node)
 		return ;
-	new_node->key = ft_strdup(key);
-	new_node->value = ft_strdup(value);
-	new_node->next = NULL;
-
 	if (!*env_list)
 	{
 		*env_list = new_node;
 		return ;
 	}
-
 	tmp = *env_list;
 	while (tmp->next)
 		tmp = tmp->next;
 	tmp->next = new_node;
-}
-
-char	*get_env_value(t_env *env_list, const char *key)
-{
-	while (env_list)
-	{
-		if (ft_strcmp(env_list->key, key) == 0)
-			return (env_list->value);
-		env_list = env_list->next;
-	}
-	return (NULL);
 }
 
 static	t_env	*create_env_node(char *env_str)
@@ -115,7 +108,7 @@ t_env	*init_env_list(char **envp)
 	{
 		new_node = create_env_node(*envp);
 		if (!new_node)
-			continue;
+			continue ;
 		if (!head)
 			head = new_node;
 		else

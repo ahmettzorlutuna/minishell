@@ -12,6 +12,60 @@
 
 #include "../includes/minishell.h"
 
+int	empty_or_null_command(t_command *cmd, t_minishell *minishell)
+{
+	if (!cmd || !cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
+	{
+		if (cmd && cmd->redirects)
+		{
+			if (create_empty_redirect_files(cmd->redirects) != 0)
+			{
+				minishell->last_exit_code = 1;
+				return (1);
+			}
+		}
+		minishell->last_exit_code = 0;
+		return (1);
+	}
+	return (0);
+}
+
+int	run_parent_builtin_if_needed(t_command *cmd, t_minishell *minishell)
+{
+	if (!cmd->next_pipe && is_parent_builtin(cmd->args[0]))
+	{
+		if (set_redirection_fds(cmd->redirects) != 0)
+		{
+			minishell->last_exit_code = 1;
+			return (1);
+		}
+		minishell->last_exit_code = run_builtin(cmd, minishell);
+		return (1);
+	}
+	return (0);
+}
+
+void	execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
+{
+	int		prev_fd;
+	pid_t	pid;
+	int		status;
+
+	prev_fd = -1;
+	status = 0;
+	if (handle_heredoc(cmd, minishell) != 0)
+		return ;
+	while (cmd)
+	{
+		pid = process_pipeline_command(cmd, minishell, &prev_fd);
+		if (pid == -1)
+			return ;
+		cmd = cmd->next_pipe;
+	}
+	waitpid(pid, &status, 0);
+	finalize_pipeline_status(status, minishell);
+}
+
 int	pipe_safe(int pipe_fd[2])
 {
 	if (pipe(pipe_fd) == -1)

@@ -12,6 +12,41 @@
 
 #include "../includes/minishell.h"
 
+char	*get_variable_value(t_expand_ctx *ctx, t_env *env_list)
+{
+	char	*variable_name;
+	char	*variable_value;
+	int		start;
+
+	start = *(ctx->i);
+	while ((ctx->token_value[*(ctx->i)]
+			&& ft_isalnum(ctx->token_value[*(ctx->i)]))
+		|| ctx->token_value[*(ctx->i)] == '_')
+		(*(ctx->i))++;
+	variable_name = ft_substr(ctx->token_value, start, *(ctx->i) - start);
+	variable_value = get_env_value(env_list, variable_name);
+	while (!variable_value && *(ctx->i) > start && ctx->quote_type != NO_QUOTE)
+	{
+		(*(ctx->i))--;
+		free(variable_name);
+		variable_name = ft_substr(ctx->token_value, start, *(ctx->i) - start);
+		variable_value = get_env_value(env_list, variable_name);
+	}
+	free(variable_name);
+	return (variable_value);
+}
+
+void	expand_exit_status(t_minishell *minishell,
+					char **result, int *i)
+{
+	char	*exit_status;
+
+	exit_status = ft_itoa(minishell->last_exit_code);
+	*result = ft_strjoin_free(*result, exit_status);
+	free(exit_status);
+	(*i)++;
+}
+
 char	*ft_strjoin_free(char *s1, char *s2)
 {
 	char	*new;

@@ -12,95 +12,101 @@
 
 #include "../includes/minishell.h"
 
-static char *expand_word(t_minishell *minishell, t_quote_type quote_type, char *token_value, t_env *env_list)
+static	void	expand_variable(
+	t_expand_ctx *ctx,
+	t_env *env_list,
+	char **result)
 {
-	char *result;
-	char *new_result;
-	char *variable_name;
-	char *variable_value;
-	char *exit_status;
-	char *temp;
-	int start;
-	int i;
+	char	*variable_value;
+	char	*temp;
+
+	variable_value = get_variable_value(ctx, env_list);
+	if (!variable_value)
+	{
+		temp = ft_strdup("");
+		*result = ft_strjoin_free(*result, temp);
+		free(temp);
+	}
+	else
+		*result = ft_strjoin_free(*result, variable_value);
+}
+
+static	int	append_literal_char(char *token_value, int *i, char **result)
+{
+	char	*new_result;
+
+	new_result = ft_substr(token_value, *i, 1);
+	if (!new_result)
+		return (1);
+	*result = ft_strjoin_free(*result, new_result);
+	free(new_result);
+	(*i)++;
+	return (0);
+}
+
+static	void	expand_dollar(t_minishell *minishell,
+						t_expand_ctx *ctx, t_env *env_list, char **result)
+{
+	if (ctx->token_value[*(ctx->i)] == '?')
+	{
+		expand_exit_status(minishell, result, ctx->i);
+	}
+	else if (ctx->token_value[*(ctx->i)] == '\0'
+		|| (!ft_isalnum(ctx->token_value[*(ctx->i)])
+			&& ctx->token_value[*(ctx->i)] != '_'))
+	{
+		*result = ft_strjoin_free(*result, "$");
+	}
+	else
+	{
+		expand_variable(ctx, env_list, result);
+	}
+}
+
+static	char	*expand_word(t_minishell *minishell,
+						t_quote_type quote_type,
+						char *token_value, t_env *env_list)
+{
+	char			*result;
+	int				i;
+	t_expand_ctx	ctx;
 
 	result = ft_strdup("");
+	if (!result)
+		return (NULL);
 	i = 0;
+	ctx.token_value = token_value;
+	ctx.i = &i;
+	ctx.quote_type = quote_type;
 	while (token_value[i])
 	{
 		if (token_value[i] == '$')
 		{
 			i++;
-			if (token_value[i] == '?')
-			{
-				exit_status = ft_itoa(minishell->last_exit_code);
-				result = ft_strjoin_free(result, exit_status);
-				free(exit_status);
-				i++;
-			}
-			else if (token_value[i] == '\0' || (!ft_isalnum(token_value[i]) && token_value[i] != '_'))
-			{
-				temp = ft_strdup("$");
-				result = ft_strjoin_free(result, temp);
-				free(temp);
-			}
-			else
-			{
-				start = i;
-				while ((token_value[i] && ft_isalnum(token_value[i])) || token_value[i] == '_')
-					i++;
-				variable_name = ft_substr(token_value, start, i - start);
-				variable_value = get_env_value(env_list, variable_name);
-				while (!variable_value && i > start && quote_type != NO_QUOTE)
-				{
-					i--;
-					free(variable_name);
-					variable_name = ft_substr(token_value, start, i - start);
-					variable_value = get_env_value(env_list, variable_name);
-				}
-				if (!variable_value)
-				{
-					temp = ft_strdup("");
-					result = ft_strjoin_free(result, temp);
-					free(variable_value);
-					free(temp);
-				}
-				else
-					result = ft_strjoin_free(result, variable_value);
-				free(variable_name);
-			}
+			expand_dollar(minishell, &ctx, env_list, &result);
 		}
-		else
-		{
-			new_result = ft_substr(token_value, i, 1);
-			if(!new_result)
-			{
-				free(result);
-				return (NULL);
-			}
-			result = ft_strjoin_free(result, new_result);
-			free(new_result);
-			i++;
-		}
+		else if (append_literal_char(token_value, &i, &result))
+			return (free(result), NULL);
 	}
-	if(!result)
-		return (NULL);
 	return (result);
 }
 
-void expand_tokens(t_minishell *minishell, t_token *token_list, t_env *env_list)
+void	expand_tokens(t_minishell *minishell,
+				t_token *token_list, t_env *env_list)
 {
-	char *expanded_word;
+	char	*expanded_word;
 
 	while (token_list)
 	{
 		if (token_list->type == TOKEN_WORD && token_list->quote != SINGLE_QUOTE)
 		{
-			expanded_word = expand_word(minishell, token_list->quote, token_list->value, env_list);
+			expanded_word = expand_word(minishell,
+					token_list->quote, token_list->value, env_list);
 			if (!expanded_word)
 			{
 				free(token_list->value);
 				token_list->value = NULL;
-				return;
+				return ;
 			}
 			free(token_list->value);
 			token_list->value = expanded_word;

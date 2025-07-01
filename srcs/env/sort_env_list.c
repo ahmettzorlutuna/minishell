@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static t_env	*copy_env_node(t_env *src)
+static	t_env	*copy_env_node(t_env *src)
 {
 	t_env	*copy;
 
@@ -20,19 +20,22 @@ static t_env	*copy_env_node(t_env *src)
 	if (!copy)
 		return (NULL);
 	copy->key = ft_strdup(src->key);
-	copy->value = src->value ? ft_strdup(src->value) : NULL;
+	if (src->value)
+		copy->value = ft_strdup(src->value);
+	else
+		copy->value = NULL;
 	copy->next = NULL;
 	return (copy);
 }
 
-static t_env	*copy_env_list(t_env *src)
+static	t_env	*copy_env_list(t_env *src)
 {
 	t_env	*new_head;
 	t_env	*new_tail;
 	t_env	*new_node;
 
-    new_tail = NULL;
-    new_head = NULL;
+	new_tail = NULL;
+	new_head = NULL;
 	while (src)
 	{
 		new_node = copy_env_node(src);
@@ -48,13 +51,13 @@ static t_env	*copy_env_list(t_env *src)
 	return (new_head);
 }
 
-static void	swap_nodes(t_env *a, t_env *b)
+static	void	swap_nodes(t_env *a, t_env *b)
 {
 	char	*tmp_key;
 	char	*tmp_value;
 
-    tmp_key = a->key;
-    tmp_value = a->value;
+	tmp_key = a->key;
+	tmp_value = a->value;
 	a->key = b->key;
 	a->value = b->value;
 	b->key = tmp_key;
@@ -65,7 +68,7 @@ t_env	*sort_env_list(t_env *env)
 {
 	t_env	*sorted;
 	t_env	*curr;
-    t_env   *next;
+	t_env	*next;
 
 	sorted = copy_env_list(env);
 	if (!sorted)

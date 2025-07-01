@@ -12,125 +12,66 @@
 
 #include "../includes/minishell.h"
 
-static char *get_word_with_quotes(const char *input, int *i, t_quote_type *quote_out)
+static int	process_operator_token(char *input, int *i, t_token **token_list)
 {
-	char *value;
-	int start;
-	int len;
-	char quote_char;
+	int		len;
+	char	*str;
+	t_token	*new_token;
 
-	quote_char = input[*i];
-	if (quote_char == '\'')
-		*quote_out = SINGLE_QUOTE;
-	else
-		*quote_out = DOUBLE_QUOTE;
-
-	(*i)++;
-	start = *i;
-	len = 0;
-	while (input[*i] && input[*i] != quote_char)
+	len = get_token_len(get_operator_type(&input[*i]));
+	str = ft_substr(input, *i, len);
+	if (!str)
+		return (1);
+	new_token = create_token(get_operator_type(&input[*i]), str, NO_QUOTE);
+	if (!new_token)
 	{
-		(*i)++;
-		len++;
+		free(str);
+		return (1);
 	}
-	if (!input[*i])
-	{
-		ft_putstr_fd("syntax error: unexpected EOF while looking for matching quote\n", 2);
-		return (NULL);
-	}
-	value = ft_substr(input, start, len);
-	(*i)++;
-	return (value);
+	add_token(token_list, new_token);
+	*i += len;
+	return (0);
 }
 
-
-static char *get_combined_token(const char *input, int *i, t_quote_type *quote_out)
+static int	process_word_token(char *input, int *i, t_token **token_list)
 {
-	char *result = NULL;
-	char *part = NULL;
-	char *temp = NULL;
-	int start;
+	char			*word_value;
+	t_token			*new_token;
+	t_quote_type	quote;
 
-	*quote_out = NO_QUOTE;
-	while (input[*i])
+	word_value = get_combined_token(input, i, &quote);
+	if (!word_value)
+		return (1);
+	new_token = create_token(TOKEN_WORD, word_value, quote);
+	if (!new_token)
 	{
-		if (is_whitespace(input[*i]) || is_operator(input[*i]))
-			break;
-
-		if (input[*i] == '\'' || input[*i] == '"')
-		{
-			part = get_word_with_quotes(input, i, quote_out);
-		}
-		else
-		{
-			start = *i;
-			while (input[*i] && !is_whitespace(input[*i]) && !is_operator(input[*i]) &&
-				   input[*i] != '"' && input[*i] != '\'')
-			{
-				(*i)++;
-			}
-			part = ft_substr(input, start, *i - start);
-		}
-		if (!part)
-		{
-			free(result);
-			return (NULL);
-		}
-		if (!result)
-			result = ft_strdup(part);
-		else
-		{
-			temp = result;
-			result = ft_strjoin(result, part);
-			free(temp);
-		}
-		free(part);
+		free(word_value);
+		return (1);
 	}
-	return (result);
+	add_token(token_list, new_token);
+	return (0);
 }
 
-
-t_token *tokenizer(char *input, t_minishell *minishell)
+t_token	*tokenizer(char *input, t_minishell *minishell)
 {
-	t_token *token_list;
-	t_token *new_token;
-	t_quote_type quote;
-	char *word_value;
-	int i;
-	int len;
-	char *str;
+	t_token	*token_list;
+	int		i;
 
+	(void)minishell;
 	token_list = NULL;
 	i = 0;
 	while (input[i])
 	{
-		if (is_whitespace(input[i]))
-			i++;
-		else if (is_operator(input[i]))
+		skip_whitespace(input, &i);
+		if (input[i] && is_operator(input[i]))
 		{
-			len = get_token_len(get_operator_type(&input[i]));
-			str = ft_substr(input, i, len);
-			new_token = create_token(get_operator_type(&input[i]), str, NO_QUOTE);
-			if (!new_token)
-				return (NULL);
-			add_token(&token_list, new_token);
-			i += len;
+			if (process_operator_token(input, &i, &token_list))
+				return (free_token_list(token_list), NULL);
 		}
-		else
+		else if (input[i])
 		{
-			word_value = get_combined_token(input, &i, &quote);
-			if (!word_value)
-			{
-				free_token_list(token_list);
-				return (NULL);
-			}
-			new_token = create_token(TOKEN_WORD, word_value, quote);
-			if (!new_token)
-			{
-				free_token_list(minishell->tokens);
-				return (NULL);
-			}
-			add_token(&token_list, new_token);
+			if (process_word_token(input, &i, &token_list))
+				return (free_token_list(token_list), NULL);
 		}
 	}
 	return (token_list);

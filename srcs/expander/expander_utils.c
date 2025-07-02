@@ -47,6 +47,33 @@ void	expand_exit_status(t_minishell *minishell,
 	(*i)++;
 }
 
+int	expand_token_value(
+	t_minishell *minishell,
+	t_token *cursor,
+	t_env *env_list)
+{
+	char	*expanded_word;
+
+	expanded_word = expand_word(minishell,
+			cursor->quote, cursor->value, env_list);
+	if (!expanded_word)
+	{
+		free(cursor->value);
+		cursor->value = NULL;
+		return (1);
+	}
+	free(cursor->value);
+	cursor->value = expanded_word;
+	return (0);
+}
+
+int	is_heredoc_delimiter(t_token *prev)
+{
+	if (prev && prev->type == TOKEN_HEREDOC)
+		return (1);
+	return (0);
+}
+
 char	*ft_strjoin_free(char *s1, char *s2)
 {
 	char	*new;

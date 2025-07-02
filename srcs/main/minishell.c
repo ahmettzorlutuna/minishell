@@ -28,7 +28,7 @@ void	init_minishell(t_minishell *minishell)
 	free_token_list(minishell->tokens);
 	minishell->tokens = tokenizer(minishell->input, minishell);
 	expand_tokens(minishell, minishell->tokens, minishell->env_list);
-	minishell->command_list = parse_command(&minishell->tokens);
+	minishell->command_list = parse_command(minishell, &minishell->tokens);
 	execute_pipeline(minishell->command_list, minishell);
 	free_loop(minishell);
 }

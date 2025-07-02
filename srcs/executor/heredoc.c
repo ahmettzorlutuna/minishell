@@ -41,7 +41,7 @@ static int	process_heredoc_pipe(t_redirection *redir, t_minishell *minishell)
 	if (pid < 0)
 		return (1);
 	if (pid == 0)
-		handle_heredoc_child(redir, pipefd);
+		handle_heredoc_child(minishell, redir, pipefd);
 	close(pipefd[1]);
 	waitpid(pid, &status, 0);
 	if (process_heredoc_result(minishell, status, pipefd[0]))

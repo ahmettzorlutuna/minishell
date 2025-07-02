@@ -25,11 +25,12 @@ t_command	*init_command(void)
 	return (cmd);
 }
 
-void	handle_pipe_recursively(t_token **cursor, t_command *cmd)
+void	handle_pipe_recursively(t_minishell *minishell,
+				t_token **cursor, t_command *cmd)
 {
 	if (*cursor && (*cursor)->type == TOKEN_PIPE)
 	{
 		*cursor = (*cursor)->next;
-		cmd->next_pipe = parse_command(cursor);
+		cmd->next_pipe = parse_command(minishell, cursor);
 	}
 }

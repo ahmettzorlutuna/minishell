@@ -21,6 +21,12 @@ static	void	free_redirections(t_redirection *redir)
 		tmp = redir->next;
 		if (redir->filename)
 			free(redir->filename);
+		if (redir->delimiter_raw)
+			free(redir->delimiter_raw);
+		if (redir->delimiter_expanded)
+			free(redir->delimiter_expanded);
+		if (redir->fd != -1)
+			close(redir->fd);
 		free(redir);
 		redir = tmp;
 	}

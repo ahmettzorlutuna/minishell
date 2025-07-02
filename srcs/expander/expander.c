@@ -63,7 +63,7 @@ static	void	expand_dollar(t_minishell *minishell,
 	}
 }
 
-static	char	*expand_word(t_minishell *minishell,
+char	*expand_word(t_minishell *minishell,
 						t_quote_type quote_type,
 						char *token_value, t_env *env_list)
 {
@@ -92,25 +92,27 @@ static	char	*expand_word(t_minishell *minishell,
 }
 
 void	expand_tokens(t_minishell *minishell,
-				t_token *token_list, t_env *env_list)
+			t_token *token_list, t_env *env_list)
 {
-	char	*expanded_word;
+	t_token	*prev;
+	t_token	*cursor;
 
-	while (token_list)
+	prev = NULL;
+	cursor = token_list;
+	while (cursor)
 	{
-		if (token_list->type == TOKEN_WORD && token_list->quote != SINGLE_QUOTE)
+		if (is_heredoc_delimiter(prev))
 		{
-			expanded_word = expand_word(minishell,
-					token_list->quote, token_list->value, env_list);
-			if (!expanded_word)
-			{
-				free(token_list->value);
-				token_list->value = NULL;
-				return ;
-			}
-			free(token_list->value);
-			token_list->value = expanded_word;
+			prev = cursor;
+			cursor = cursor->next;
+			continue ;
 		}
-		token_list = token_list->next;
+		if (cursor->type == TOKEN_WORD && cursor->quote != SINGLE_QUOTE)
+		{
+			if (expand_token_value(minishell, cursor, env_list))
+				return ;
+		}
+		prev = cursor;
+		cursor = cursor->next;
 	}
 }

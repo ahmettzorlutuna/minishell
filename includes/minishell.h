@@ -75,6 +75,9 @@ typedef struct s_redirection
 {
 	t_token_type			type;
 	char					*filename;
+	t_quote_type			redir_quote;
+	char					*delimiter_raw;
+	char					*delimiter_expanded;
 	int						fd;
 	struct s_redirection	*next;
 }	t_redirection;
@@ -188,15 +191,21 @@ void			expand_tokens(t_minishell *minishell,
 void			expand_exit_status(t_minishell *minishell,
 					char **result, int *i);
 char			*get_variable_value(t_expand_ctx *ctx, t_env *env_list);
+char			*expand_word(t_minishell *minishell,
+					t_quote_type quote_type,
+					char *token_value, t_env *env_list);
+int				is_heredoc_delimiter(t_token *prev);
+int				expand_token_value(t_minishell *minishell,
+					t_token *cursor, t_env *env_list);
 
 /*  Parser  */
-t_command		*parse_command(t_token **tokens);
+t_command		*parse_command(t_minishell *minishell, t_token **tokens);
 t_command		*init_command(void);
-void			handle_pipe_recursively(t_token **cursor, t_command *cmd);
+void			handle_pipe_recursively(t_minishell *minishell,
+					t_token **cursor, t_command *cmd);
 char			**list_to_array(t_list *args);
 int				add_arg_to_list(t_list **args, char *value);
 t_command		*init_command(void);
-void			handle_pipe_recursively(t_token **cursor, t_command *cmd);
 
 /* Executor */
 char			*ft_strjoin_three(const char *s1,
@@ -218,8 +227,11 @@ void			execute_pipeline_fork(t_command *cmd, t_minishell *minishell);
 int				process_pipeline_command(t_command *cmd,
 					t_minishell *minishell, int *prev_fd);
 void			finalize_pipeline_status(int status, t_minishell *minishell);
-char			*heredoc_read_loop(const char *delimiter);
-int				run_heredoc_child(const char *delimiter, int write_fd);
-void			handle_heredoc_child(t_redirection *redir, int *pipefd);
+char			*heredoc_read_loop(t_minishell *minishell,
+					t_redirection *redir);
+int				run_heredoc_child(t_minishell *minishell,
+					t_redirection *redir, int write_fd);
+void			handle_heredoc_child(t_minishell *minishell,
+					t_redirection *redir, int *pipefd);
 
 #endif

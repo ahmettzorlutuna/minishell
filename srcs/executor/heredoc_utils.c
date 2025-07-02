@@ -12,7 +12,22 @@
 
 #include "../includes/minishell.h"
 
-char	*heredoc_read_loop(const char *delimiter)
+static	char	*heredoc_line_process(t_minishell *minishell,
+				t_redirection *redir, char *line)
+{
+	char	*expanded;
+
+	if (redir->redir_quote == NO_QUOTE)
+	{
+		expanded = expand_word(minishell,
+				NO_QUOTE, line, minishell->env_list);
+		free(line);
+		line = expanded;
+	}
+	return (line);
+}
+
+char	*heredoc_read_loop(t_minishell *minishell, t_redirection *redir)
 {
 	char	*line;
 	char	*buffer;
@@ -30,31 +45,32 @@ char	*heredoc_read_loop(const char *delimiter)
 				exit(130);
 			exit(0);
 		}
-		if (!delimiter || ft_strcmp(line, delimiter) == 0)
-		{
-			free(line);
+		if (ft_strcmp(line, redir->delimiter_raw) == 0)
 			break ;
-		}
+		line = heredoc_line_process(minishell, redir, line);
 		buffer = ft_strjoin_free(buffer, line);
 		buffer = ft_strjoin_free(buffer, "\n");
+		free(line);
 	}
 	return (buffer);
 }
 
-int	run_heredoc_child(const char *delimiter, int write_fd)
+int	run_heredoc_child(t_minishell *minishell,
+			t_redirection *redir, int write_fd)
 {
 	char	*buffer;
 
 	g_signal_flag = 0;
-	buffer = heredoc_read_loop(delimiter);
+	buffer = heredoc_read_loop(minishell, redir);
 	write(write_fd, buffer, ft_strlen(buffer));
 	free(buffer);
 	close(write_fd);
 	exit(0);
 }
 
-void	handle_heredoc_child(t_redirection *redir, int *pipefd)
+void	handle_heredoc_child(t_minishell *minishell,
+				t_redirection *redir, int *pipefd)
 {
 	setup_heredoc_signals();
-	run_heredoc_child(redir->filename, pipefd[1]);
+	run_heredoc_child(minishell, redir, pipefd[1]);
 }

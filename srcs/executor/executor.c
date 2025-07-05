@@ -27,7 +27,10 @@ static	void	setup_child_processes(t_command *cmd,
 		close(pipe_fd[1]);
 	}
 	if (set_redirection_fds(cmd->redirects) != 0)
+	{
+		free_minishell(minishell);
 		exit(minishell->last_exit_code);
+	}
 	check_and_execute(cmd, minishell);
 }
 
@@ -51,9 +54,7 @@ int	process_pipeline_command(t_command *cmd,
 {
 	int		pipe_fd[2];
 	pid_t	pid;
-	int		status;
 
-	status = 0;
 	if (cmd->next_pipe && pipe_safe(pipe_fd))
 		return (-1);
 	pid = fork_safe();
@@ -63,12 +64,15 @@ int	process_pipeline_command(t_command *cmd,
 	{
 		setup_default_signals();
 		if (set_redirection_fds(cmd->redirects) != 0)
+		{
+			free_minishell(minishell);
 			exit(1);
+		}
 		setup_child_processes(cmd, *prev_fd, pipe_fd, minishell);
 	}
 	else
 		signal(SIGINT, SIG_IGN);
-	status = handle_parent_process(*prev_fd, pipe_fd, cmd);
+	handle_parent_process(*prev_fd, pipe_fd, cmd);
 	if (cmd->next_pipe)
 		*prev_fd = pipe_fd[0];
 	return (pid);

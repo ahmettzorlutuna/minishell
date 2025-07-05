@@ -47,7 +47,10 @@ static int	parse_redirection(t_minishell *minishell,
 	t_redirection	**redir_ptr;
 
 	if (!cursor->next || cursor->next->type != TOKEN_WORD)
+	{
+		free_command_list(cmd);
 		return (1);
+	}
 	redir = ft_calloc(1, sizeof(t_redirection));
 	if (!redir)
 		return (1);
@@ -56,10 +59,10 @@ static int	parse_redirection(t_minishell *minishell,
 	if (cursor->type == TOKEN_HEREDOC)
 	{
 		if (init_heredoc_redir(minishell, redir, cursor->next))
-			return (free(redir), 1);
+			return (free_redirections(redir), 1);
 	}
 	else if (init_filename_redir(redir, cursor->next))
-		return (free(redir), 1);
+		return (free_redirections(redir), 1);
 	redir_ptr = &cmd->redirects;
 	while (*redir_ptr)
 		redir_ptr = &(*redir_ptr)->next;
@@ -98,11 +101,14 @@ t_command	*parse_command(t_minishell *minishell, t_token **tokens)
 	while (cursor && cursor->type != TOKEN_PIPE && cursor->type != TOKEN_EOF)
 	{
 		if (process_token(minishell, &cursor, cmd, &args))
+		{
+			free_arg_list(args);
 			return (NULL);
+		}
 		cursor = cursor->next;
 	}
 	handle_pipe_recursively(minishell, &cursor, cmd);
 	cmd->args = list_to_array(args);
-	ft_lstclear(&args, free);
+	free_arg_list(args);
 	return (cmd);
 }

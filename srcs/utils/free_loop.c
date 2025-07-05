@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static	void	free_redirections(t_redirection *redir)
+void	free_redirections(t_redirection *redir)
 {
 	t_redirection	*tmp;
 
@@ -32,11 +32,13 @@ static	void	free_redirections(t_redirection *redir)
 	}
 }
 
-static	void	free_command_list(t_command *cmd)
+void	free_command_list(t_command *cmd)
 {
 	t_command	*tmp;
 	int			i;
 
+	if (!cmd)
+		return ;
 	while (cmd)
 	{
 		tmp = cmd->next_pipe;
@@ -54,25 +56,46 @@ static	void	free_command_list(t_command *cmd)
 	}
 }
 
+void free_arg_list(t_list *args)
+{
+    t_list *tmp;
+
+    while (args)
+    {
+        tmp = args->next;
+        if (args->content)
+            free(args->content);
+        free(args);
+        args = tmp;
+    }
+}
+
 void	free_loop(t_minishell *minishell)
 {
-	free(minishell->input);
+	if(minishell->input)
+	{
+		free(minishell->input);
+		minishell->input = NULL;
+	}
 	if (minishell->tokens)
 	{
 		free_token_list(minishell->tokens);
 		minishell->tokens = NULL;
 	}
-	free_command_list(minishell->command_list);
-	minishell->input = NULL;
-	minishell->tokens = NULL;
-	minishell->command_list = NULL;
+	if(minishell->command_list)
+	{
+		free_command_list(minishell->command_list);
+		minishell->command_list = NULL;
+	}
 }
 
 void	free_minishell(t_minishell *minishell)
 {
+	free_loop(minishell);
 	if (minishell->env_array)
 		free_env_array(minishell->env_array);
 	if (minishell->env_list)
 		free_env_list(minishell->env_list);
+	rl_clear_history();
 	free(minishell);
 }

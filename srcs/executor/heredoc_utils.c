@@ -34,7 +34,10 @@ char	*heredoc_read_loop(t_minishell *minishell, t_redirection *redir)
 
 	buffer = ft_strdup("");
 	if (!buffer)
+	{
+		free_minishell(minishell);
 		exit(1);
+	}
 	while (1)
 	{
 		line = readline("> ");
@@ -42,7 +45,11 @@ char	*heredoc_read_loop(t_minishell *minishell, t_redirection *redir)
 		{
 			free(buffer);
 			if (g_signal_flag == SIGINT)
+			{
+				free_minishell(minishell);
 				exit(130);
+			}
+			free_minishell(minishell);
 			exit(0);
 		}
 		if (ft_strcmp(line, redir->delimiter_raw) == 0)
@@ -65,6 +72,7 @@ int	run_heredoc_child(t_minishell *minishell,
 	write(write_fd, buffer, ft_strlen(buffer));
 	free(buffer);
 	close(write_fd);
+	free_minishell(minishell);
 	exit(0);
 }
 

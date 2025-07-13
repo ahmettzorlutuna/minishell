@@ -129,7 +129,6 @@ void			setup_heredoc_signals(void);
 void			setup_default_signals(void);
 
 /* Builtins */
-int				is_parent_builtin(char *cmd);
 int				is_builtin(char *cmd);
 int				run_builtin(t_command *cmd, t_minishell *minishell);
 int				is_valid_key(const char *key);
@@ -237,5 +236,6 @@ void			handle_heredoc_child(t_minishell *minishell,
 void			free_redirections(t_redirection *redir);
 void			free_command_list(t_command *cmd);
 void			free_arg_list(t_list *args);
+int				restore_fds_and_return(int in_bak, int out_bak, int ret);
 
 #endif

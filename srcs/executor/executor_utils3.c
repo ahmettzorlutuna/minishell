@@ -12,6 +12,20 @@
 
 #include "../includes/minishell.h"
 
+int	restore_fds_and_return(int in_bak, int out_bak, int ret)
+{
+	if (dup2(in_bak, STDIN_FILENO) == -1
+		|| dup2(out_bak, STDOUT_FILENO) == -1)
+	{
+		perror("dup2 restore");
+		exit(1);
+	}
+	close(in_bak);
+	close(out_bak);
+	return (ret);
+}
+
+
 static char	**split_path_list(t_env *env_list)
 {
 	char	*path_value;

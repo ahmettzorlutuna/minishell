@@ -34,16 +34,6 @@ int	run_builtin(t_command *cmd, t_minishell *minishell)
 	return (1);
 }
 
-int	is_parent_builtin(char *cmd)
-{
-	if (!cmd)
-		return (0);
-	return (!ft_strcmp(cmd, "cd")
-		|| !ft_strcmp(cmd, "export")
-		|| !ft_strcmp(cmd, "unset")
-		|| !ft_strcmp(cmd, "exit"));
-}
-
 int	is_builtin(char *cmd)
 {
 	if (!cmd)

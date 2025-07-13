@@ -32,15 +32,27 @@ int	empty_or_null_command(t_command *cmd, t_minishell *minishell)
 
 int	run_parent_builtin_if_needed(t_command *cmd, t_minishell *minishell)
 {
-	if (!cmd->next_pipe && is_parent_builtin(cmd->args[0]))
+	int	in_bak;
+	int	out_bak;
+	int	redir;
+
+	if (!cmd->next_pipe && is_builtin(cmd->args[0]))
 	{
-		if (set_redirection_fds(cmd->redirects) != 0)
+		in_bak = dup(STDIN_FILENO);
+		out_bak = dup(STDOUT_FILENO);
+		if (in_bak == -1 || out_bak == -1)
+		{
+			perror("dup");
+			exit(1);
+		}
+		redir = set_redirection_fds(cmd->redirects);
+		if (redir != 0)
 		{
 			minishell->last_exit_code = 1;
-			return (1);
+			return (restore_fds_and_return(in_bak, out_bak, 1));
 		}
 		minishell->last_exit_code = run_builtin(cmd, minishell);
-		return (1);
+		return (restore_fds_and_return(in_bak, out_bak, 1));
 	}
 	return (0);
 }

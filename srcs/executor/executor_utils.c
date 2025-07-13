@@ -53,6 +53,7 @@ void	print_and_exit(t_minishell *minishell, char *prefix, char *msg, int code)
 	}
 	ft_putstr_fd(msg, 2);
 	ft_putchar_fd('\n', 2);
+	free_minishell(minishell);
 	exit(code);
 }
 

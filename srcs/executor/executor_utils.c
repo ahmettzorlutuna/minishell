@@ -42,7 +42,8 @@ char	*ft_strjoin_three(const char *s1, const char *s2, const char *s3)
 	return (full);
 }
 
-void	print_and_exit(t_minishell *minishell, char *prefix, char *msg, int code)
+void	print_and_exit(t_minishell *minishell, char *prefix,
+				char *msg, int code)
 {
 	(void)minishell;
 	ft_putstr_fd("minishell: ", 2);
@@ -90,11 +91,16 @@ void	check_and_execute(t_command *cmd, t_minishell *minishell)
 {
 	char		*path;
 	struct stat	sb;
+	int			status;
 
 	if (!cmd->args[0] || cmd->args[0][0] == '\0')
 		exit(0);
 	if (is_builtin(cmd->args[0]))
-		exit(run_builtin(cmd, minishell));
+	{
+		status = run_builtin(cmd, minishell);
+		free_minishell(minishell);
+		exit(status);
+	}
 	path = get_executable_path(cmd, minishell, &sb);
 	execve(path, cmd->args, minishell->env_array);
 	perror("minishell");

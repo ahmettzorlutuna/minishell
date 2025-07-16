@@ -217,7 +217,8 @@ int				create_empty_redirect_files(t_redirection *redir);
 int				handle_heredoc(t_command *cmd, t_minishell *minishell);
 int				pipe_safe(int pipe_fd[2]);
 pid_t			fork_safe(void);
-void			print_and_exit(t_minishell *minishell, char *prefix, char *msg, int code);
+void			print_and_exit(t_minishell *minishell,
+					char *prefix, char *msg, int code);
 void			check_and_execute(t_command *cmd, t_minishell *minishell);
 int				empty_or_null_command(t_command *cmd, t_minishell *minishell);
 int				run_parent_builtin_if_needed(t_command *cmd,
@@ -236,6 +237,7 @@ void			handle_heredoc_child(t_minishell *minishell,
 void			free_redirections(t_redirection *redir);
 void			free_command_list(t_command *cmd);
 void			free_arg_list(t_list *args);
-int				restore_fds_and_return(int in_bak, int out_bak, int ret);
+int				restore_fds_and_return(int in_bak, int out_bak,
+					int ret, t_minishell *minishell);
 
 #endif

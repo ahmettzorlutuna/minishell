@@ -49,10 +49,10 @@ int	run_parent_builtin_if_needed(t_command *cmd, t_minishell *minishell)
 		if (redir != 0)
 		{
 			minishell->last_exit_code = 1;
-			return (restore_fds_and_return(in_bak, out_bak, 1));
+			return (restore_fds_and_return(in_bak, out_bak, 1, minishell));
 		}
 		minishell->last_exit_code = run_builtin(cmd, minishell);
-		return (restore_fds_and_return(in_bak, out_bak, 1));
+		return (restore_fds_and_return(in_bak, out_bak, 1, minishell));
 	}
 	return (0);
 }

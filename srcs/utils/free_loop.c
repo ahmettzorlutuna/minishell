@@ -56,23 +56,23 @@ void	free_command_list(t_command *cmd)
 	}
 }
 
-void free_arg_list(t_list *args)
+void	free_arg_list(t_list *args)
 {
-    t_list *tmp;
+	t_list	*tmp;
 
-    while (args)
-    {
-        tmp = args->next;
-        if (args->content)
-            free(args->content);
-        free(args);
-        args = tmp;
-    }
+	while (args)
+	{
+		tmp = args->next;
+		if (args->content)
+			free(args->content);
+		free(args);
+		args = tmp;
+	}
 }
 
 void	free_loop(t_minishell *minishell)
 {
-	if(minishell->input)
+	if (minishell->input)
 	{
 		free(minishell->input);
 		minishell->input = NULL;
@@ -82,7 +82,7 @@ void	free_loop(t_minishell *minishell)
 		free_token_list(minishell->tokens);
 		minishell->tokens = NULL;
 	}
-	if(minishell->command_list)
+	if (minishell->command_list)
 	{
 		free_command_list(minishell->command_list);
 		minishell->command_list = NULL;

@@ -18,12 +18,14 @@ void	init_mini_data(t_minishell *minishell, char **envp)
 	minishell->tokens = NULL;
 	minishell->command_list = NULL;
 	minishell->last_exit_code = 0;
+    minishell->has_syntax_error = 0;
 	minishell->env_list = init_env_list(envp);
 	minishell->env_array = env_list_to_array(minishell->env_list);
 }
 
 void	init_minishell(t_minishell *minishell)
 {
+    minishell->has_syntax_error = 0;
 	add_history(minishell->input);
 	free_token_list(minishell->tokens);
 	minishell->tokens = tokenizer(minishell->input, minishell);
@@ -32,3 +34,4 @@ void	init_minishell(t_minishell *minishell)
 	execute_pipeline(minishell->command_list, minishell);
 	free_loop(minishell);
 }
+ 

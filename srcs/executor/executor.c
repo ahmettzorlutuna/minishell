@@ -95,6 +95,8 @@ void	finalize_pipeline_status(int status, t_minishell *minishell)
 
 void	execute_pipeline(t_command *cmd, t_minishell *minishell)
 {
+	if (minishell->has_syntax_error)
+		return ;
 	if (empty_or_null_command(cmd, minishell))
 		return ;
 	if (run_parent_builtin_if_needed(cmd, minishell))

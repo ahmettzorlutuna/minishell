@@ -24,7 +24,8 @@ int	empty_or_null_command(t_command *cmd, t_minishell *minishell)
 				return (1);
 			}
 		}
-		minishell->last_exit_code = 0;
+		ft_putstr_fd("minishell: '' command not found\n", 2);
+		minishell->last_exit_code = 127;
 		return (1);
 	}
 	return (0);

@@ -26,11 +26,7 @@ static char	*get_word_with_quotes(const char *input,
 	start = *i;
 	len = measure_quoted_length(input, i, quote_char);
 	if (!input[*i])
-	{
-		ft_putstr_fd("syntax error: unexpected EOF while" \
-				"looking for matching quote\n", 2);
 		return (NULL);
-	}
 	value = ft_substr(input, start, len);
 	(*i)++;
 	return (value);

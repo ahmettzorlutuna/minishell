@@ -104,6 +104,7 @@ typedef struct s_minishell
 	t_command	*command_list;
 	char		**env_array;
 	int			last_exit_code;
+	int			has_syntax_error;
 }	t_minishell;
 
 /* Expand variable fonksiyonu norm structları */

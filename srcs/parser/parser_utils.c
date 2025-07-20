@@ -31,6 +31,20 @@ void	handle_pipe_recursively(t_minishell *minishell,
 	if (*cursor && (*cursor)->type == TOKEN_PIPE)
 	{
 		*cursor = (*cursor)->next;
+
+		if (!*cursor || (*cursor)->type == TOKEN_PIPE)
+		{
+			ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
+			minishell->last_exit_code = 2;
+			minishell->has_syntax_error = 1;
+			return ;
+		}
 		cmd->next_pipe = parse_command(minishell, cursor);
+		if (!cmd->next_pipe)
+		{
+			free_command_list(cmd);
+			cmd = NULL;
+			return ;
+		}
 	}
 }

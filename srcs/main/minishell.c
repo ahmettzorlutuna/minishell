@@ -34,4 +34,3 @@ void	init_minishell(t_minishell *minishell)
 	execute_pipeline(minishell->command_list, minishell);
 	free_loop(minishell);
 }
- 

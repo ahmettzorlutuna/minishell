@@ -14,27 +14,24 @@
 
 char	*get_variable_value(t_expand_ctx *ctx, t_env *env_list)
 {
+	int		start;
+	int		len;
 	char	*variable_name;
 	char	*variable_value;
-	int		start;
 
 	start = *(ctx->i);
-	while ((ctx->token_value[*(ctx->i)]
-			&& ft_isalnum(ctx->token_value[*(ctx->i)]))
-		|| ctx->token_value[*(ctx->i)] == '_')
+	while (ctx->token_value[*(ctx->i)] &&
+		(ft_isalnum(ctx->token_value[*(ctx->i)]) || ctx->token_value[*(ctx->i)] == '_'))
 		(*(ctx->i))++;
-	variable_name = ft_substr(ctx->token_value, start, *(ctx->i) - start);
+	len = *(ctx->i) - start;
+	if (len == 0)
+		return (NULL); // örneğin: `$"` gibi bir şeyse
+	variable_name = ft_substr(ctx->token_value, start, len);
 	variable_value = get_env_value(env_list, variable_name);
-	while (!variable_value && *(ctx->i) > start && ctx->quote_type != NO_QUOTE)
-	{
-		(*(ctx->i))--;
-		free(variable_name);
-		variable_name = ft_substr(ctx->token_value, start, *(ctx->i) - start);
-		variable_value = get_env_value(env_list, variable_name);
-	}
 	free(variable_name);
 	return (variable_value);
 }
+
 
 void	expand_exit_status(t_minishell *minishell,
 					char **result, int *i)

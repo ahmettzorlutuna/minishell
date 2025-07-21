@@ -14,7 +14,7 @@
 
 int	empty_or_null_command(t_command *cmd, t_minishell *minishell)
 {
-	if (!cmd || !cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
+	if (!cmd || !cmd->args || !cmd->args[0])
 	{
 		if (cmd && cmd->redirects)
 		{
@@ -57,9 +57,12 @@ int	empty_or_null_command(t_command *cmd, t_minishell *minishell)
 			minishell->last_exit_code = 2;
 			return (1);
 		}
-		ft_putstr_fd("minishell: '' command not found\n", 2);
-		minishell->last_exit_code = 127;
-		return (1);
+		else if(!minishell->tokens || !minishell->tokens->value)
+		{
+			ft_putstr_fd("minishell: '' command not found\n", 2);
+			minishell->last_exit_code = 127;
+			return (1);
+		}
 	}
 	return (0);
 }

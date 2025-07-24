@@ -63,10 +63,18 @@ typedef enum e_quote_type
 //* Structures
 //* ************************************* */
 
+typedef struct s_token_part
+{
+	char			*str;
+	t_quote_type	quote;
+	struct s_token_part	*next;
+}	t_token_part;
+
 typedef struct s_token
 {
+	t_token_part	*parts;
 	t_token_type	type;
-	t_quote_type	quote;
+	// t_quote_type	quote;
 	char			*value;
 	struct s_token	*next;
 }	t_token;
@@ -123,6 +131,7 @@ void			init_minishell(t_minishell *minishell);
 /* Free */
 void			free_minishell(t_minishell *minishell);
 void			free_loop(t_minishell *minishell);
+void			free_token_parts(t_token_part *head);
 
 /*	Signal */
 void			setup_interactive_signals(void);
@@ -181,8 +190,8 @@ void			determine_quote_type(char c, t_quote_type *quote_out);
 int				measure_quoted_length(const char *input,
 					int *i, char quote_char);
 void			skip_whitespace(char *input, int *i);
-char			*get_combined_token(const char *input,
-					int *i, t_quote_type *quote_out);
+t_token_part	*extract_one_token_parts(const char *input, int *i);
+
 
 /*  Expander  */
 char			*ft_strjoin_free(char *s1, char *s2);
@@ -206,6 +215,7 @@ void			handle_pipe_recursively(t_minishell *minishell,
 char			**list_to_array(t_list *args);
 int				add_arg_to_list(t_list **args, char *value);
 t_command		*init_command(void);
+char			*join_token_parts(t_minishell *minishell, t_token_part *parts);
 
 /* Executor */
 char			*ft_strjoin_three(const char *s1,

@@ -91,6 +91,22 @@ char	*expand_word(t_minishell *minishell,
 	return (result);
 }
 
+int	has_strictly_single_quote_parts(t_token *token)
+{
+	t_token_part	*part;
+
+	part = token->parts;
+	if (!part)
+		return (0); // boşsa expand edilsin
+	while (part)
+	{
+		if (part->quote != SINGLE_QUOTE)
+			return (0); // içinde SINGLE olmayan varsa expand edilmeli
+		part = part->next;
+	}
+	return (1); // hepsi SINGLE_QUOTE ise expand etme
+}
+
 void	expand_tokens(t_minishell *minishell,
 			t_token *token_list, t_env *env_list)
 {
@@ -107,7 +123,7 @@ void	expand_tokens(t_minishell *minishell,
 			cursor = cursor->next;
 			continue ;
 		}
-		if (cursor->type == TOKEN_WORD && cursor->quote != SINGLE_QUOTE)
+		if (cursor->type == TOKEN_WORD && !has_strictly_single_quote_parts(cursor))
 		{
 			if (expand_token_value(minishell, cursor, env_list))
 				return ;

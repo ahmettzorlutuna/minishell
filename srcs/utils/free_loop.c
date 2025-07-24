@@ -80,6 +80,7 @@ void	free_loop(t_minishell *minishell)
 	if (minishell->tokens)
 	{
 		free_token_list(minishell->tokens);
+		// free_token_parts(minishell->tokens);
 		minishell->tokens = NULL;
 	}
 	if (minishell->command_list)

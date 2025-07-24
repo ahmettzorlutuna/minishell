@@ -25,7 +25,7 @@ char	*get_variable_value(t_expand_ctx *ctx, t_env *env_list)
 		(*(ctx->i))++;
 	len = *(ctx->i) - start;
 	if (len == 0)
-		return (NULL); // örneğin: `$"` gibi bir şeyse
+		return (NULL);
 	variable_name = ft_substr(ctx->token_value, start, len);
 	variable_value = get_env_value(env_list, variable_name);
 	free(variable_name);
@@ -44,23 +44,33 @@ void	expand_exit_status(t_minishell *minishell,
 	(*i)++;
 }
 
-int	expand_token_value(
-	t_minishell *minishell,
-	t_token *cursor,
-	t_env *env_list)
+int	expand_token_value(t_minishell *minishell, t_token *cursor, t_env *env_list)
 {
-	char	*expanded_word;
+	t_token_part	*part;
+	char			*expanded;
+	char			*joined;
 
-	expanded_word = expand_word(minishell,
-			cursor->quote, cursor->value, env_list);
-	if (!expanded_word)
-	{
-		free(cursor->value);
-		cursor->value = NULL;
+	joined = ft_strdup("");
+	if (!joined)
 		return (1);
+	part = cursor->parts;
+	while (part)
+	{
+		if (part->quote == SINGLE_QUOTE)
+			expanded = ft_strdup(part->str);
+		else
+			expanded = expand_word(minishell, part->quote, part->str, env_list);
+		if (!expanded)
+		{
+			free(joined);
+			return (1);
+		}
+		joined = ft_strjoin_free(joined, expanded);
+		free(expanded);
+		part = part->next;
 	}
 	free(cursor->value);
-	cursor->value = expanded_word;
+	cursor->value = joined;
 	return (0);
 }
 

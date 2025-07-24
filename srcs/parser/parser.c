@@ -12,18 +12,42 @@
 
 #include "../includes/minishell.h"
 
+t_quote_type	get_heredoc_quote_type(t_token *token)
+{
+	t_token_part	*part;
+
+	if (!token || !token->parts)
+		return (NO_QUOTE);
+
+	part = token->parts;
+
+	// Eğer sadece bir part varsa onun quote'u belirleyicidir
+	if (part->next == NULL)
+		return (part->quote);
+
+	// Birden fazla part varsa heredoc expand edilir
+	return (NO_QUOTE);
+}
+
 static int	init_heredoc_redir(t_minishell *minishell,
 				t_redirection *redir, t_token *token)
 {
 	redir->delimiter_raw = ft_strdup(token->value);
 	if (!redir->delimiter_raw)
 		return (1);
-	redir->redir_quote = token->quote;
+
+	redir->redir_quote = get_heredoc_quote_type(token);
+
 	if (redir->redir_quote == NO_QUOTE)
+	{
 		redir->delimiter_expanded = expand_word(minishell,
 				NO_QUOTE, redir->delimiter_raw, minishell->env_list);
+	}
 	else
+	{
 		redir->delimiter_expanded = ft_strdup(redir->delimiter_raw);
+	}
+
 	if (!redir->delimiter_expanded)
 	{
 		free(redir->delimiter_raw);
@@ -70,11 +94,50 @@ static int	parse_redirection(t_minishell *minishell,
 	return (0);
 }
 
+char	*join_token_parts(t_minishell *minishell, t_token_part *parts)
+{
+	t_token_part	*current = parts;
+	char			*result;
+	char			*expanded;
+	char			*tmp;
+
+	result = ft_strdup("");
+	if (!result)
+		return (NULL);
+	while (current)
+	{
+		if (current->quote == SINGLE_QUOTE)
+			expanded = ft_strdup(current->str);
+		else
+			expanded = expand_word(minishell, current->quote,
+					current->str, minishell->env_list);
+		if (!expanded)
+		{
+			free(result);
+			return (NULL);
+		}
+		tmp = ft_strjoin(result, expanded);
+		free(result);
+		free(expanded);
+		result = tmp;
+		current = current->next;
+	}
+	return (result);
+}
+
 static int	process_token(t_minishell *minishell,
 				t_token **cursor, t_command *cmd, t_list **args)
 {
+	char	*value;
+
 	if ((*cursor)->type == TOKEN_WORD)
-		add_arg_to_list(args, (*cursor)->value);
+	{
+		value = join_token_parts(minishell, (*cursor)->parts);
+		if (!value)
+			return (1);
+		add_arg_to_list(args, value);
+		free(value);
+	}
 	else if ((*cursor)->type == TOKEN_REDIRECT_IN
 		|| (*cursor)->type == TOKEN_REDIRECT_OUT
 		|| (*cursor)->type == TOKEN_HEREDOC
@@ -91,23 +154,22 @@ t_command	*parse_command(t_minishell *minishell, t_token **tokens)
 {
 	t_command	*cmd;
 	t_list		*args;
-	t_token		*cursor;
 
 	cmd = init_command();
 	if (!cmd)
 		return (NULL);
 	args = NULL;
-	cursor = *tokens;
-	while (cursor && cursor->type != TOKEN_PIPE && cursor->type != TOKEN_EOF)
+
+	while (*tokens && (*tokens)->type != TOKEN_PIPE && (*tokens)->type != TOKEN_EOF)
 	{
-		if (process_token(minishell, &cursor, cmd, &args))
+		if (process_token(minishell, tokens, cmd, &args))
 		{
 			free_arg_list(args);
 			return (NULL);
 		}
-		cursor = cursor->next;
+		*tokens = (*tokens)->next;
 	}
-	handle_pipe_recursively(minishell, &cursor, cmd);
+	handle_pipe_recursively(minishell, tokens, cmd);
 	cmd->args = list_to_array(args);
 	free_arg_list(args);
 	return (cmd);

@@ -25,6 +25,7 @@ int	measure_quoted_length(const char *input, int *i, char quote_char)
 	int	len;
 
 	len = 0;
+	// printf("→ measure_quoted_length starting at: %c\n", input[*i]);
 	while (input[*i] && input[*i] != quote_char)
 	{
 		(*i)++;

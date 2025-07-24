@@ -27,3 +27,16 @@ void	free_token_list(t_token *head)
 		count++;
 	}
 }
+
+void	free_token_parts(t_token_part *head)
+{
+	t_token_part	*temp;
+
+	while (head)
+	{
+		temp = head->next;
+		free(head->str);
+		free(head);
+		head = temp;
+	}
+}

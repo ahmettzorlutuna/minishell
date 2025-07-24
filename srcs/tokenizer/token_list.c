@@ -31,14 +31,13 @@ void	add_token(t_token **head, t_token *new_token)
 
 t_token	*create_token(t_token_type type, char *value, t_quote_type quote)
 {
-	t_token	*new_token;
-
-	new_token = (t_token *)malloc(sizeof(t_token));
-	if (!new_token)
+	t_token *token = malloc(sizeof(t_token));
+	(void)quote;
+	if (!token)
 		return (NULL);
-	new_token->type = type;
-	new_token->value = value;
-	new_token->quote = quote;
-	new_token->next = NULL;
-	return (new_token);
+	token->type = type;
+	token->value = value;  // expand sonrası güncellenecekse NULL bırakılabilir
+	token->parts = NULL;
+	token->next = NULL;
+	return (token);
 }

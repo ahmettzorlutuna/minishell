@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils2.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azorlutu <azorlutu@student.42istanbul.com  +#+  +:+       +#+        */
+/*   By: azorlutu <azorlutu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 20:31:40 by azorlutu          #+#    #+#             */
-/*   Updated: 2025/06/03 20:31:41 by azorlutu         ###   ########.tr       */
+/*   Updated: 2025/07/26 14:51:05 by azorlutu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,59 +14,19 @@
 
 int	empty_or_null_command(t_command *cmd, t_minishell *minishell)
 {
-	if (!cmd || !cmd->args || !cmd->args[0])
+	if (!cmd || !cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
 	{
-		if (cmd && cmd->redirects)
-		{
-			t_redirection *redir = cmd->redirects;
-			while (redir)
-			{
-				// Eğer input redirect varsa → bu geçerli değil
-				if (redir->type == TOKEN_REDIRECT_IN || redir->type == TOKEN_HEREDOC)
-				{
-					ft_putstr_fd("minishell: ", 2);
-					ft_putstr_fd(cmd->redirects->filename, 2);
-					ft_putstr_fd(": No such file or directory", 2);
-					ft_putchar_fd('\n', 2);
-					minishell->last_exit_code = 1;
-					return (1);
-				}
-				redir = redir->next;
-			}
-			// sadece output/append redirect varsa
-			if (create_empty_redirect_files(cmd->redirects) != 0)
-			{
-				minishell->last_exit_code = 1;
-				return (1);
-			}
-			minishell->last_exit_code = 0;
+		if (is_quoted_empty_command_error(cmd, minishell))
 			return (1);
-		}
-		// 2. args varsa ama bunlar sadece bir operatorse (örn: |, >, >>)
-		if (minishell->tokens
-			&& minishell->tokens->value
-			&& (ft_strcmp(minishell->tokens->value, "|") == 0
-			|| ft_strcmp(minishell->tokens->value, "<") == 0
-			|| ft_strcmp(minishell->tokens->value, "<<") == 0
-			|| ft_strcmp(minishell->tokens->value, ">") == 0
-			|| ft_strcmp(minishell->tokens->value, ">>") == 0))
-		{
-			ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-			ft_putstr_fd(minishell->tokens->value, 2);
-			ft_putstr_fd("'\n", 2);
-			minishell->last_exit_code = 2;
+		if (handle_redirect_only_command(cmd, minishell))
 			return (1);
-		}
-		else if(!minishell->tokens || !minishell->tokens->value)
-		{
-			ft_putstr_fd("minishell: '' command not found\n", 2);
-			minishell->last_exit_code = 127;
+		if (is_only_operator_syntax_error(minishell))
 			return (1);
-		}
+		minishell->last_exit_code = 0;
+		return (1);
 	}
 	return (0);
 }
-
 
 int	run_parent_builtin_if_needed(t_command *cmd, t_minishell *minishell)
 {

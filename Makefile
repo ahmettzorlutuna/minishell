@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: azorlutu <azorlutu@student.42istanbul      +#+  +:+       +#+         #
+#    By: azorlutu <azorlutu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/17 17:59:39 by azorlutu          #+#    #+#              #
-#    Updated: 2025/05/17 17:59:41 by azorlutu         ###   ########.fr        #
+#    Updated: 2025/07/26 14:51:29 by azorlutu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME = minishell
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror
 
 SRC_PATH = ./srcs/
 INC_PATH = ./includes/
@@ -26,6 +26,7 @@ SRC	=	builtins/utils/builtin_utils.c \
 		builtins/echo/builtin_echo.c \
 		builtins/env/builtin_env.c \
 		builtins/exit/builtin_exit.c \
+		builtins/exit/builtin_exit_utils.c \
 		builtins/export/builtin_export.c \
 		builtins/export/builtin_export_utils.c \
 		builtins/pwd/builtin_pwd.c \
@@ -35,6 +36,7 @@ SRC	=	builtins/utils/builtin_utils.c \
 		env/free_env.c \
 		env/sort_env_list.c \
 		env/env_list_utils.c \
+		executor/executor_utils4.c \
 		executor/executor_utils3.c \
 		executor/executor_utils2.c \
 		executor/executor_utils.c \

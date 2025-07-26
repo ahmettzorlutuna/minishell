@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static	void	setup_child_processes(t_command *cmd,
+void	setup_child_processes(t_command *cmd,
 					int prev_fd, int pipe_fd[2], t_minishell *minishell)
 {
 	if (prev_fd != -1)
@@ -34,7 +34,7 @@ static	void	setup_child_processes(t_command *cmd,
 	check_and_execute(cmd, minishell);
 }
 
-static	int	handle_parent_process(int prev_fd, int pipe_fd[2], t_command *cmd)
+int	handle_parent_process(int prev_fd, int pipe_fd[2], t_command *cmd)
 {
 	int	status;
 
@@ -47,35 +47,6 @@ static	int	handle_parent_process(int prev_fd, int pipe_fd[2], t_command *cmd)
 		prev_fd = pipe_fd[0];
 	}
 	return (status);
-}
-
-int	process_pipeline_command(t_command *cmd,
-						t_minishell *minishell, int *prev_fd)
-{
-	int		pipe_fd[2];
-	pid_t	pid;
-
-	if (cmd->next_pipe && pipe_safe(pipe_fd))
-		return (-1);
-	pid = fork_safe();
-	if (pid == -1)
-		return (-1);
-	else if (pid == 0)
-	{
-		setup_default_signals();
-		if (set_redirection_fds(cmd->redirects) != 0)
-		{
-			free_minishell(minishell);
-			exit(1);
-		}
-		setup_child_processes(cmd, *prev_fd, pipe_fd, minishell);
-	}
-	else
-		signal(SIGINT, SIG_IGN);
-	handle_parent_process(*prev_fd, pipe_fd, cmd);
-	if (cmd->next_pipe)
-		*prev_fd = pipe_fd[0];
-	return (pid);
 }
 
 void	finalize_pipeline_status(int status, t_minishell *minishell)

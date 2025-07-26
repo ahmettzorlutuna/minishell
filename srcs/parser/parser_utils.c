@@ -31,10 +31,10 @@ void	handle_pipe_recursively(t_minishell *minishell,
 	if (*cursor && (*cursor)->type == TOKEN_PIPE)
 	{
 		*cursor = (*cursor)->next;
-
 		if (!*cursor || (*cursor)->type == TOKEN_PIPE)
 		{
-			ft_putstr_fd("minishell: syntax error near unexpected token `|'\n", 2);
+			ft_putstr_fd("minishell: syntax error", 2);
+			ft_putstr_fd(" near unexpected token `|'\n", 2);
 			minishell->last_exit_code = 2;
 			minishell->has_syntax_error = 1;
 			return ;

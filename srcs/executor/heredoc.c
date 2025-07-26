@@ -37,11 +37,13 @@ static int	process_heredoc_pipe(t_redirection *redir, t_minishell *minishell)
 
 	if (pipe(pipefd) == -1)
 		return (1);
-	pid = fork();
-	if (pid < 0)
-		return (1);
-	if (pid == 0)
+	pid = fork_safe();
+	if (pid == -1)
+		return (-1);
+	else if (pid == 0)
 		handle_heredoc_child(minishell, redir, pipefd);
+	else
+		signal(SIGINT, SIG_IGN);
 	close(pipefd[1]);
 	waitpid(pid, &status, 0);
 	if (process_heredoc_result(minishell, status, pipefd[0]))

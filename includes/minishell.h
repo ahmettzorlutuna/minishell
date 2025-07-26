@@ -129,6 +129,9 @@ void			free_loop(t_minishell *minishell);
 void			setup_interactive_signals(void);
 void			setup_heredoc_signals(void);
 void			setup_default_signals(void);
+void			sigquit_handler(int sig);
+void			sigint_handler(int sig);
+void			sigint_heredoc_handler(int sig);
 
 /* Builtins */
 int				is_builtin(char *cmd);
@@ -250,5 +253,7 @@ int				is_quoted_empty_command_error(t_command *cmd,
 int				handle_redirect_only_command(t_command *cmd,
 					t_minishell *minishell);
 int				is_only_operator_syntax_error(t_minishell *minishell);
+int				handle_parent_process(int prev_fd, int pipe_fd[2], t_command *cmd);
+void			setup_child_processes(t_command *cmd, int prev_fd, int pipe_fd[2], t_minishell *minishell);
 
 #endif

@@ -36,6 +36,7 @@ SRC	=	builtins/utils/builtin_utils.c \
 		env/free_env.c \
 		env/sort_env_list.c \
 		env/env_list_utils.c \
+		executor/executor_utils5.c \
 		executor/executor_utils4.c \
 		executor/executor_utils3.c \
 		executor/executor_utils2.c \
@@ -58,6 +59,7 @@ SRC	=	builtins/utils/builtin_utils.c \
 		parser/parser_utils.c \
 		parser/parser_node_utils.c \
 		utils/handle_signals.c \
+		utils/signal_handlers.c \
 		utils/free_loop.c
 
 SRCS	= $(addprefix $(SRC_PATH), $(SRC))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azorlutu <azorlutu@student.42istanbul      +#+  +:+       +#+        */
+/*   By: azorlutu <azorlutu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 17:50:44 by azorlutu          #+#    #+#             */
-/*   Updated: 2025/05/04 17:50:45 by azorlutu         ###   ########.fr       */
+/*   Updated: 2025/07/26 14:52:45 by azorlutu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ typedef struct s_command
 	char				**args;
 	t_redirection		*redirects;
 	struct s_command	*next_pipe;
+	int					is_quoted_empty_command;
 }	t_command;
 
 typedef struct s_env
@@ -151,6 +152,10 @@ int				print_export_error(char *arg);
 int				handle_no_args(t_minishell *minishell);
 void			set_env_and_update(t_minishell *minishell,
 					char *key, char *value);
+void			no_args_exit(t_minishell *minishell);
+void			non_numeric_exit(char *arg, t_minishell *minishell);
+void			too_many_args_exit(t_minishell *minishell);
+void			normal_exit(char *arg, t_minishell *minishell);
 
 /*	Environments	*/
 t_env			*init_env_list(char **envp);
@@ -240,5 +245,10 @@ void			free_command_list(t_command *cmd);
 void			free_arg_list(t_list *args);
 int				restore_fds_and_return(int in_bak, int out_bak,
 					int ret, t_minishell *minishell);
+int				is_quoted_empty_command_error(t_command *cmd,
+					t_minishell *minishell);
+int				handle_redirect_only_command(t_command *cmd,
+					t_minishell *minishell);
+int				is_only_operator_syntax_error(t_minishell *minishell);
 
 #endif

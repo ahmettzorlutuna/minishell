@@ -20,18 +20,18 @@ char	*get_variable_value(t_expand_ctx *ctx, t_env *env_list)
 	char	*variable_value;
 
 	start = *(ctx->i);
-	while (ctx->token_value[*(ctx->i)] &&
-		(ft_isalnum(ctx->token_value[*(ctx->i)]) || ctx->token_value[*(ctx->i)] == '_'))
+	while (ctx->token_value[*(ctx->i)]
+		&& (ft_isalnum(ctx->token_value[*(ctx->i)])
+			|| ctx->token_value[*(ctx->i)] == '_'))
 		(*(ctx->i))++;
 	len = *(ctx->i) - start;
 	if (len == 0)
-		return (NULL); // örneğin: `$"` gibi bir şeyse
+		return (NULL);
 	variable_name = ft_substr(ctx->token_value, start, len);
 	variable_value = get_env_value(env_list, variable_name);
 	free(variable_name);
 	return (variable_value);
 }
-
 
 void	expand_exit_status(t_minishell *minishell,
 					char **result, int *i)

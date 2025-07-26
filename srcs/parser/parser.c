@@ -74,7 +74,13 @@ static int	process_token(t_minishell *minishell,
 				t_token **cursor, t_command *cmd, t_list **args)
 {
 	if ((*cursor)->type == TOKEN_WORD)
+	{
+		if (!*args && (*cursor)->value[0] == '\0'
+			&& ((*cursor)->quote == SINGLE_QUOTE
+				|| (*cursor)->quote == DOUBLE_QUOTE))
+			cmd->is_quoted_empty_command = 1;
 		add_arg_to_list(args, (*cursor)->value);
+	}
 	else if ((*cursor)->type == TOKEN_REDIRECT_IN
 		|| (*cursor)->type == TOKEN_REDIRECT_OUT
 		|| (*cursor)->type == TOKEN_HEREDOC

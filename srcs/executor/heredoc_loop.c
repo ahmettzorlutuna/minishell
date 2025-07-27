@@ -25,16 +25,15 @@ static	char	*init_heredoc_buffer(t_minishell *minishell)
 	return (buffer);
 }
 
-static	void	handle_heredoc_eof(t_minishell *minishell, char *buffer)
+static	char	*handle_heredoc_eof(t_minishell *minishell, char *buffer)
 {
-	free(buffer);
 	if (g_signal_flag == SIGINT)
 	{
+		free(buffer);
 		free_minishell(minishell);
 		exit(130);
 	}
-	free_minishell(minishell);
-	exit(0);
+	return (buffer);
 }
 
 static	char	*heredoc_line_process(t_minishell *minishell,
@@ -72,7 +71,10 @@ char	*heredoc_read_loop(t_minishell *minishell, t_redirection *redir)
 	{
 		line = readline("> ");
 		if (!line)
+		{
 			handle_heredoc_eof(minishell, buffer);
+			break ;
+		}
 		if (ft_strcmp(line, redir->delimiter_raw) == 0)
 			break ;
 		buffer = append_heredoc_line(minishell, redir, line, buffer);

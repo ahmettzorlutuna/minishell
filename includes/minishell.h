@@ -238,8 +238,6 @@ int				process_pipeline_command(t_command *cmd,
 void			finalize_pipeline_status(int status, t_minishell *minishell);
 char			*heredoc_read_loop(t_minishell *minishell,
 					t_redirection *redir);
-int				run_heredoc_child(t_minishell *minishell,
-					t_redirection *redir, int write_fd);
 void			handle_heredoc_child(t_minishell *minishell,
 					t_redirection *redir, int *pipefd);
 
@@ -253,7 +251,9 @@ int				is_quoted_empty_command_error(t_command *cmd,
 int				handle_redirect_only_command(t_command *cmd,
 					t_minishell *minishell);
 int				is_only_operator_syntax_error(t_minishell *minishell);
-int				handle_parent_process(int prev_fd, int pipe_fd[2], t_command *cmd);
-void			setup_child_processes(t_command *cmd, int prev_fd, int pipe_fd[2], t_minishell *minishell);
+int				handle_parent_process(int prev_fd,
+					int pipe_fd[2], t_command *cmd);
+void			setup_child_processes(t_command *cmd,
+					int prev_fd, int pipe_fd[2], t_minishell *minishell);
 
 #endif

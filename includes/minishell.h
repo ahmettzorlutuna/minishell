@@ -31,6 +31,9 @@
 
 extern int	g_signal_flag;
 
+# define FREE_ARG 1
+# define NO_FREE  0
+
 //* ************************************* */
 //* Enums
 //* ************************************* */
@@ -157,7 +160,7 @@ void			set_env_and_update(t_minishell *minishell,
 					char *key, char *value);
 void			no_args_exit(t_minishell *minishell);
 void			non_numeric_exit(char *arg, t_minishell *minishell);
-void			too_many_args_exit(t_minishell *minishell);
+int				too_many_args_exit(void);
 void			normal_exit(char *arg, t_minishell *minishell);
 
 /*	Environments	*/
@@ -227,7 +230,7 @@ int				handle_heredoc(t_command *cmd, t_minishell *minishell);
 int				pipe_safe(int pipe_fd[2]);
 pid_t			fork_safe(void);
 void			print_and_exit(t_minishell *minishell,
-					char *prefix, char *msg, int code);
+					char *prefix, char *msg, int code, int should_free_prefix);
 void			check_and_execute(t_command *cmd, t_minishell *minishell);
 int				empty_or_null_command(t_command *cmd, t_minishell *minishell);
 int				run_parent_builtin_if_needed(t_command *cmd,

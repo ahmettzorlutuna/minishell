@@ -12,57 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static	char	*heredoc_line_process(t_minishell *minishell,
-				t_redirection *redir, char *line)
-{
-	char	*expanded;
-
-	if (redir->redir_quote == NO_QUOTE)
-	{
-		expanded = expand_word(minishell,
-				NO_QUOTE, line, minishell->env_list);
-		free(line);
-		line = expanded;
-	}
-	return (line);
-}
-
-char	*heredoc_read_loop(t_minishell *minishell, t_redirection *redir)
-{
-	char	*line;
-	char	*buffer;
-
-	buffer = ft_strdup("");
-	if (!buffer)
-	{
-		free_minishell(minishell);
-		exit(1);
-	}
-	while (1)
-	{
-		line = readline("> ");
-		if (!line)
-		{
-			free(buffer);
-			if (g_signal_flag == SIGINT)
-			{
-				free_minishell(minishell);
-				exit(130);
-			}
-			free_minishell(minishell);
-			exit(0);
-		}
-		if (ft_strcmp(line, redir->delimiter_raw) == 0)
-			break ;
-		line = heredoc_line_process(minishell, redir, line);
-		buffer = ft_strjoin_free(buffer, line);
-		buffer = ft_strjoin_free(buffer, "\n");
-		free(line);
-	}
-	return (buffer);
-}
-
-int	run_heredoc_child(t_minishell *minishell,
+static	int	run_heredoc_child(t_minishell *minishell,
 			t_redirection *redir, int write_fd)
 {
 	char	*buffer;

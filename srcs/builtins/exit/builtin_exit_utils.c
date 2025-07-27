@@ -14,8 +14,11 @@
 
 void	no_args_exit(t_minishell *minishell)
 {
+	int	exit_code;
+
+	exit_code = minishell->last_exit_code;
 	free_minishell(minishell);
-	exit(minishell->last_exit_code);
+	exit(exit_code);
 }
 
 void	non_numeric_exit(char *arg, t_minishell *minishell)
@@ -27,12 +30,10 @@ void	non_numeric_exit(char *arg, t_minishell *minishell)
 	exit(2);
 }
 
-void	too_many_args_exit(t_minishell *minishell)
+int	too_many_args_exit(void)
 {
 	ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-	minishell->last_exit_code = 1;
-	free_minishell(minishell);
-	exit(1);
+	return (1);
 }
 
 void	normal_exit(char *arg, t_minishell *minishell)

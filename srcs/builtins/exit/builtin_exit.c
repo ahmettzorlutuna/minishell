@@ -38,7 +38,8 @@ int	builtin_exit(char **args, t_minishell *minishell)
 	if (!is_numeric(args[1]))
 		non_numeric_exit(args[1], minishell);
 	if (args[2])
-		too_many_args_exit(minishell);
-	normal_exit(args[1], minishell);
+		return (too_many_args_exit());
+	if (!args[2])
+		normal_exit(args[1], minishell);
 	return (0);
 }

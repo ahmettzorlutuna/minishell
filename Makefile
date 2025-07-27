@@ -43,6 +43,7 @@ SRC	=	builtins/utils/builtin_utils.c \
 		executor/executor_utils.c \
 		executor/executor.c \
 		executor/heredoc.c \
+		executor/heredoc_loop.c \
 		executor/heredoc_utils.c \
 		executor/redirection.c \
 		expander/expander.c \

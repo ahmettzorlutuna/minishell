@@ -14,14 +14,17 @@
 
 static	void	shell_loop(t_minishell *minishell)
 {
+	int	exit_code;
+
 	while (1)
 	{
 		minishell->input = readline("minishell> ");
 		if (minishell->input == NULL)
 		{
+			exit_code = minishell->last_exit_code;
 			ft_putstr_fd("exit\n", 0);
 			free_minishell(minishell);
-			exit(minishell->last_exit_code);
+			exit(exit_code);
 		}
 		if (minishell->input && *minishell->input)
 		{

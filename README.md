@@ -98,4 +98,10 @@ Bash benzeri davranış sergilemelidir.
 - `echo -nnnnnn -nnnnnnn kekfkejejw` gibi hatalı girişlerde uygun hata mesajı verilmelidir.
 - `echo ""` gibi hatalı girişlerde de uygun hata verilmelidir.
 
+exit 10 15 çözdük. çıkıyordu artık çıkmıyor.
 
+/bin/asdadad still reachable var.
+
+export a env yok export a= env var
+
+get_executable_path testlerini yap.

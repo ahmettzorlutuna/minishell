@@ -52,12 +52,11 @@ static int	process_word_token(char *input, int *i, t_token **token_list)
 	return (0);
 }
 
-t_token	*tokenizer(char *input, t_minishell *minishell)
+t_token	*tokenizer(char *input)
 {
 	t_token	*token_list;
 	int		i;
 
-	(void)minishell;
 	token_list = NULL;
 	i = 0;
 	while (input[i])

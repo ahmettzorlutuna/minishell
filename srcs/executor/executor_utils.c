@@ -42,23 +42,6 @@ char	*ft_strjoin_three(const char *s1, const char *s2, const char *s3)
 	return (full);
 }
 
-void	print_and_exit(t_minishell *minishell, char *prefix,
-				char *msg, int code, int should_free_prefix)
-{
-	ft_putstr_fd("minishell: ", 2);
-	if (prefix)
-	{
-		ft_putstr_fd(prefix, 2);
-		ft_putstr_fd(": ", 2);
-	}
-	ft_putstr_fd(msg, 2);
-	ft_putchar_fd('\n', 2);
-	if (should_free_prefix == FREE_ARG)
-		free(prefix);
-	free_minishell(minishell);
-	exit(code);
-}
-
 static char	*get_executable_path(t_command *cmd,
 						t_minishell *minishell, struct stat *sb)
 {
@@ -70,21 +53,21 @@ static char	*get_executable_path(t_command *cmd,
 		if (!cmd->args[0])
 			cmd->args[0] = ft_strdup("$");
 		print_and_exit(minishell, cmd->args[0],
-			"command not found", 127, NO_FREE);
+			"command not found", 127);
 	}
 	if (stat(path, sb) != 0)
 	{
 		if (errno == ENOENT)
-			print_and_exit(minishell, path,
-				"No such file or directory", 127, FREE_ARG);
+			print_and_exit_free(minishell, path,
+				"No such file or directory", 127);
 		if (errno == EACCES)
-			print_and_exit(minishell, path,
-				"Permission denied", 126, FREE_ARG);
+			print_and_exit_free(minishell, path,
+				"Permission denied", 126);
 	}
 	if (S_ISDIR(sb->st_mode))
-		print_and_exit(minishell, path, "Is a directory", 126, FREE_ARG);
+		print_and_exit_free(minishell, path, "Is a directory", 126);
 	if (access(path, X_OK) != 0)
-		print_and_exit(minishell, path, "Permission denied", 126, FREE_ARG);
+		print_and_exit_free(minishell, path, "Permission denied", 126);
 	return (path);
 }
 

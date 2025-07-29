@@ -96,6 +96,8 @@ void	free_minishell(t_minishell *minishell)
 		free_env_array(minishell->env_array);
 	if (minishell->env_list)
 		free_env_list(minishell->env_list);
+	if (minishell->temp_pids)
+		free(minishell->temp_pids);
 	rl_clear_history();
 	free(minishell);
 }

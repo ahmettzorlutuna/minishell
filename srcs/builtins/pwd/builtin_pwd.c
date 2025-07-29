@@ -14,13 +14,13 @@
 
 int	builtin_pwd(void)
 {
-	char	cwd[PATH_MAX];
+	char	pwd[PATH_MAX];
 
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	if (getcwd(pwd, sizeof(pwd)) == NULL)
 	{
 		perror("minishell: pwd");
 		return (1);
 	}
-	printf("%s\n", cwd);
+	printf("%s\n", pwd);
 	return (0);
 }

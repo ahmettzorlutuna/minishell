@@ -14,6 +14,13 @@
 
 int	empty_or_null_command(t_command *cmd, t_minishell *minishell)
 {
+	if (!cmd)
+	{
+		minishell->last_exit_code = 2;
+		ft_putstr_fd("minishell: syntax error ", 2);
+		ft_putstr_fd("near unexpected token `newline'\n", 2);
+		return (1);
+	}
 	if (!cmd || !cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
 	{
 		if (is_quoted_empty_command_error(cmd, minishell))
@@ -107,5 +114,6 @@ void	execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
 	pid_count = run_pipeline_commands(cmd, minishell, pids);
 	if (pid_count >= 0)
 		wait_all_children(pids, pid_count, minishell);
-	free(pids);
+	free(minishell->temp_pids);
+	minishell->temp_pids = NULL;
 }

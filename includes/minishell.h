@@ -33,6 +33,8 @@ extern int	g_signal_flag;
 
 # define FREE_ARG 1
 # define NO_FREE  0
+# define MAX_PIDS 1024
+# define PATH_MAX 4096
 
 //* ************************************* */
 //* Enums
@@ -109,6 +111,7 @@ typedef struct s_minishell
 	char		**env_array;
 	int			last_exit_code;
 	int			has_syntax_error;
+	pid_t		*temp_pids;
 }	t_minishell;
 
 /* Expand variable fonksiyonu norm structları */
@@ -178,7 +181,7 @@ t_env			*sort_env_list(t_env *env);
 void			update_existing_key(t_env *node, const char *value);
 
 /*      Tokenizer      */
-t_token			*tokenizer(char *input, t_minishell *minishell);
+t_token			*tokenizer(char *input);
 t_token			*create_token(t_token_type type,
 					char *value, t_quote_type quote);
 void			add_token(t_token **head, t_token *new_token);
@@ -229,8 +232,10 @@ int				create_empty_redirect_files(t_redirection *redir);
 int				handle_heredoc(t_command *cmd, t_minishell *minishell);
 int				pipe_safe(int pipe_fd[2]);
 pid_t			fork_safe(void);
-void			print_and_exit(t_minishell *minishell,
-					char *prefix, char *msg, int code, int should_free_prefix);
+void			print_and_exit(t_minishell *minishell, char *prefix,
+					char *msg, int code);
+void			print_and_exit_free(t_minishell *minishell,
+					char *prefix, char *msg, int code);
 void			check_and_execute(t_command *cmd, t_minishell *minishell);
 int				empty_or_null_command(t_command *cmd, t_minishell *minishell);
 int				run_parent_builtin_if_needed(t_command *cmd,
@@ -238,7 +243,8 @@ int				run_parent_builtin_if_needed(t_command *cmd,
 void			execute_pipeline_fork(t_command *cmd, t_minishell *minishell);
 int				process_pipeline_command(t_command *cmd,
 					t_minishell *minishell, int *prev_fd);
-void			finalize_pipeline_status(int status, t_minishell *minishell);
+void			wait_all_children(pid_t *pids, int count,
+					t_minishell *minishell);
 char			*heredoc_read_loop(t_minishell *minishell,
 					t_redirection *redir);
 void			handle_heredoc_child(t_minishell *minishell,

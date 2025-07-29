@@ -55,43 +55,57 @@ int	run_parent_builtin_if_needed(t_command *cmd, t_minishell *minishell)
 	return (0);
 }
 
-void	execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
+static	int	get_pipe_count(t_command *cmd)
 {
-	int		prev_fd;
-	pid_t	pid;
-	int		status;
+	int	count;
 
+	count = 0;
+	while (cmd)
+	{
+		count++;
+		cmd = cmd->next_pipe;
+	}
+	return (count);
+}
+
+int	run_pipeline_commands(t_command *cmd, t_minishell *minishell,
+							pid_t *pids)
+{
+	int	pid;
+	int	pid_count;
+	int	prev_fd;
+
+	pid_count = 0;
 	prev_fd = -1;
-	status = 0;
 	if (handle_heredoc(cmd, minishell) != 0)
-		return ;
+		return (-1);
 	while (cmd)
 	{
 		pid = process_pipeline_command(cmd, minishell, &prev_fd);
 		if (pid == -1)
-			return ;
+			return (-1);
+		pids[pid_count++] = pid;
 		cmd = cmd->next_pipe;
 	}
-	waitpid(pid, &status, 0);
-	finalize_pipeline_status(status, minishell);
+	return (pid_count);
 }
 
-int	pipe_safe(int pipe_fd[2])
+void	execute_pipeline_fork(t_command *cmd, t_minishell *minishell)
 {
-	if (pipe(pipe_fd) == -1)
+	pid_t	*pids;
+	int		pipe_count;
+	int		pid_count;
+
+	pipe_count = get_pipe_count(cmd);
+	pids = malloc(sizeof(pid_t) * pipe_count);
+	minishell->temp_pids = pids;
+	if (!pids)
 	{
-		perror("pipe error");
-		return (1);
+		perror("malloc");
+		exit(1);
 	}
-	return (0);
-}
-
-pid_t	fork_safe(void)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid == -1)
-		perror("fork error");
-	return (pid);
+	pid_count = run_pipeline_commands(cmd, minishell, pids);
+	if (pid_count >= 0)
+		wait_all_children(pids, pid_count, minishell);
+	free(pids);
 }

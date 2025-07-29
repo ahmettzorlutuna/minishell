@@ -54,3 +54,23 @@ int	process_pipeline_command(t_command *cmd,
 		*prev_fd = pipe_fd[0];
 	return (pid);
 }
+
+int	pipe_safe(int pipe_fd[2])
+{
+	if (pipe(pipe_fd) == -1)
+	{
+		perror("pipe error");
+		return (1);
+	}
+	return (0);
+}
+
+pid_t	fork_safe(void)
+{
+	pid_t	pid;
+
+	pid = fork();
+	if (pid == -1)
+		perror("fork error");
+	return (pid);
+}

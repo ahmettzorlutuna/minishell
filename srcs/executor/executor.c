@@ -49,19 +49,28 @@ int	handle_parent_process(int prev_fd, int pipe_fd[2], t_command *cmd)
 	return (status);
 }
 
-void	finalize_pipeline_status(int status, t_minishell *minishell)
+void	wait_all_children(pid_t *pids, int count,
+				t_minishell *minishell)
 {
-	setup_interactive_signals();
-	if (WIFEXITED(status))
-		minishell->last_exit_code = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
+	int	status;
+	int	i;
+
+	i = 0;
+	while (i < count)
 	{
-		minishell->last_exit_code = 128 + WTERMSIG(status);
-		if (WTERMSIG(status) == SIGINT)
-			write(1, "\n", 1);
+		waitpid(pids[i], &status, 0);
+		if (WIFEXITED(status))
+			minishell->last_exit_code = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			minishell->last_exit_code = 128 + WTERMSIG(status);
+			if (WTERMSIG(status) == SIGINT)
+				write(1, "\n", 1);
+		}
+		else
+			minishell->last_exit_code = 1;
+		i++;
 	}
-	else
-		minishell->last_exit_code = 1;
 }
 
 void	execute_pipeline(t_command *cmd, t_minishell *minishell)

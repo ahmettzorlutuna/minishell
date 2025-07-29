@@ -70,3 +70,34 @@ int	is_only_operator_syntax_error(t_minishell *minishell)
 	}
 	return (0);
 }
+
+void	print_and_exit(t_minishell *minishell, char *prefix,
+						char *msg, int code)
+{
+	ft_putstr_fd("minishell: ", 2);
+	if (prefix)
+	{
+		ft_putstr_fd(prefix, 2);
+		ft_putstr_fd(": ", 2);
+	}
+	ft_putstr_fd(msg, 2);
+	ft_putchar_fd('\n', 2);
+	free_minishell(minishell);
+	exit(code);
+}
+
+void	print_and_exit_free(t_minishell *minishell, char *prefix,
+							char *msg, int code)
+{
+	ft_putstr_fd("minishell: ", 2);
+	if (prefix)
+	{
+		ft_putstr_fd(prefix, 2);
+		ft_putstr_fd(": ", 2);
+	}
+	ft_putstr_fd(msg, 2);
+	ft_putchar_fd('\n', 2);
+	free(prefix);
+	free_minishell(minishell);
+	exit(code);
+}

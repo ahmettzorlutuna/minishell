@@ -12,23 +12,32 @@
 
 #include "../includes/minishell.h"
 
+static int	open_redirect_fd(t_redirection *redir, int *fd_out)
+{
+	if (redir->type == TOKEN_REDIRECT_IN)
+		*fd_out = open(redir->filename, O_RDONLY);
+	else if (redir->type == TOKEN_REDIRECT_OUT)
+		*fd_out = open(redir->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else if (redir->type == TOKEN_APPEND)
+		*fd_out = open(redir->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else if (redir->type == TOKEN_HEREDOC)
+		*fd_out = redir->fd;
+	else
+	{
+		ft_putstr_fd("syntax error: unexpected redirection\n", 2);
+		return (1);
+	}
+	return (0);
+}
+
 int	create_empty_redirect_files(t_redirection *redir)
 {
 	int	fd;
 
 	while (redir)
 	{
-		if (redir->type == TOKEN_REDIRECT_IN)
-			fd = open(redir->filename, O_RDONLY);
-		else if (redir->type == TOKEN_REDIRECT_OUT)
-			fd = open(redir->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		else if (redir->type == TOKEN_APPEND)
-			fd = open(redir->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		else
-		{
-			ft_putstr_fd("syntax error: unexpected redirection\n", 2);
+		if (open_redirect_fd(redir, &fd) != 0)
 			return (1);
-		}
 		if (fd < 0)
 		{
 			perror(redir->filename);

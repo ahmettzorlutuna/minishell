@@ -35,7 +35,6 @@ void	sigint_heredoc_handler(int sig)
 void	sigquit_handler(int sig)
 {
 	(void)sig;
-	g_signal_flag = SIGINT;
 	rl_replace_line("", 0);
 	write(1, "Quit (core dumped)\n", 19);
 	rl_on_new_line();

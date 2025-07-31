@@ -20,6 +20,7 @@ void	init_mini_data(t_minishell *minishell, char **envp)
 	minishell->temp_pids = NULL;
 	minishell->last_exit_code = 0;
 	minishell->has_syntax_error = 0;
+	minishell->last_exit_code = 0;
 	minishell->env_list = init_env_list(envp);
 	minishell->env_array = env_list_to_array(minishell->env_list);
 }

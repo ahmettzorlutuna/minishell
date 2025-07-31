@@ -14,20 +14,21 @@
 
 int	empty_or_null_command(t_command *cmd, t_minishell *minishell)
 {
+	if (is_only_operator_syntax_error(minishell))
+		return (1);
 	if (!cmd)
 	{
 		minishell->last_exit_code = 2;
-		ft_putstr_fd("minishell: syntax error ", 2);
-		ft_putstr_fd("near unexpected token `newline'\n", 2);
+		ft_putstr_fd("minishell: syntax error", 2);
+		ft_putstr_fd(" near unexpected token `newline'\n", 2);
 		return (1);
 	}
-	if (!cmd || !cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
+	if ((!cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
+					&& (ft_strcmp(minishell->tokens->value, "<<") != 0))
 	{
 		if (is_quoted_empty_command_error(cmd, minishell))
 			return (1);
 		if (handle_redirect_only_command(cmd, minishell))
-			return (1);
-		if (is_only_operator_syntax_error(minishell))
 			return (1);
 		minishell->last_exit_code = 0;
 		return (1);

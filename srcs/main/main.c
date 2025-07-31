@@ -18,6 +18,7 @@ static	void	shell_loop(t_minishell *minishell)
 
 	while (1)
 	{
+		setup_interactive_signals();
 		minishell->input = readline("minishell> ");
 		if (minishell->input == NULL)
 		{
@@ -25,6 +26,11 @@ static	void	shell_loop(t_minishell *minishell)
 			ft_putstr_fd("exit\n", 0);
 			free_minishell(minishell);
 			exit(exit_code);
+		}
+		if (g_signal_flag == SIGINT)
+		{
+			minishell->last_exit_code = 130;
+			g_signal_flag = 0;
 		}
 		if (minishell->input && *minishell->input)
 		{
@@ -38,7 +44,6 @@ int	main(int argc, char **argv, char **envp)
 	t_minishell	*minishell;
 
 	(void)argv;
-	setup_interactive_signals();
 	minishell = (t_minishell *)malloc(sizeof(t_minishell));
 	if (!minishell)
 		return (ft_putstr_fd("Error: Memory allocation failed\n",

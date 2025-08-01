@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_list.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azorlutu <azorlutu@student.42istanbul      +#+  +:+       +#+        */
+/*   By: ekamar <ekamar@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 17:42:29 by azorlutu          #+#    #+#             */
-/*   Updated: 2025/05/17 17:42:30 by azorlutu         ###   ########.fr       */
+/*   Updated: 2025/08/01 20:44:41 by ekamar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	unset_env_value(t_env **env_list, const char *key)
 	}
 }
 
-static t_env	*create_new_env_node(const char *key, const char *value)
+static	t_env	*create_new_env_node(const char *key, const char *value)
 {
 	t_env	*new_node;
 
@@ -45,7 +45,10 @@ static t_env	*create_new_env_node(const char *key, const char *value)
 	if (!new_node)
 		return (NULL);
 	new_node->key = ft_strdup(key);
-	new_node->value = ft_strdup(value);
+	if (value != NULL)
+		new_node->value = ft_strdup(value);
+	else
+		new_node->value = NULL;
 	new_node->next = NULL;
 	return (new_node);
 }

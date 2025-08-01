@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_array.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azorlutu <azorlutu@student.42istanbul      +#+  +:+       +#+        */
+/*   By: ekamar <ekamar@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/18 15:06:24 by azorlutu          #+#    #+#             */
-/*   Updated: 2025/05/18 15:06:25 by azorlutu         ###   ########.fr       */
+/*   Updated: 2025/08/01 20:44:48 by ekamar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,16 @@ static	char	*join_key_value(const char *key, const char *value)
 	return (result);
 }
 
+static void	clear_env_array_until(int i, char **env_array)
+{
+	while (i > 0)
+	{
+		free(env_array[i - 1]);
+		i--;
+	}
+	free(env_array);
+}
+
 static int	fill_env_array(t_env *env_list, char **env_array)
 {
 	int		i;
@@ -46,18 +56,16 @@ static int	fill_env_array(t_env *env_list, char **env_array)
 	tmp = env_list;
 	while (tmp)
 	{
-		env_array[i] = join_key_value(tmp->key, tmp->value);
-		if (!env_array[i])
+		if (tmp->value != NULL)
 		{
-			while (i > 0)
+			env_array[i] = join_key_value(tmp->key, tmp->value);
+			if (!env_array[i])
 			{
-				free(env_array[i - 1]);
-				i--;
+				clear_env_array_until(i, env_array);
+				return (1);
 			}
-			free(env_array);
-			return (1);
+			i++;
 		}
-		i++;
 		tmp = tmp->next;
 	}
 	env_array[i] = NULL;

@@ -18,14 +18,14 @@
 # include <readline/readline.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <sys/stat.h>  //stat(), fstat(), lstat()
-# include <dirent.h>	   //opendir(), readdir(), closedir()
-# include <string.h>	   //strerror()
-# include <fcntl.h>	   //open(), O_RDONLY
-# include <sys/ioctl.h> //ioctl()
-# include <signal.h>	   //signal()
-# include <sys/wait.h>  //waitpid()
-# include <errno.h>	   //errno, perror()
+# include <sys/stat.h>
+# include <dirent.h> 
+# include <string.h>
+# include <fcntl.h>
+# include <sys/ioctl.h>
+# include <signal.h>
+# include <sys/wait.h>
+# include <errno.h>
 
 # include "../libft/libft.h"
 
@@ -36,16 +36,6 @@ extern int	g_signal_flag;
 # define MAX_PIDS 1024
 # define PATH_MAX 4096
 
-//* ************************************* */
-//* Enums
-//* ************************************* */
-// Word (Example: "hello", "world")
-// <
-// >
-// <<
-// >>
-// |
-// Last token (to end the list)
 typedef enum e_token_type
 {
 	TOKEN_WORD,
@@ -63,10 +53,6 @@ typedef enum e_quote_type
 	SINGLE_QUOTE,
 	DOUBLE_QUOTE
 }	t_quote_type;
-
-//* ************************************* */
-//* Structures
-//* ************************************* */
 
 typedef struct s_token
 {
@@ -114,8 +100,6 @@ typedef struct s_minishell
 	pid_t		*temp_pids;
 }	t_minishell;
 
-/* Expand variable fonksiyonu norm structları */
-
 typedef struct s_expand_ctx
 {
 	char			*token_value;
@@ -123,15 +107,15 @@ typedef struct s_expand_ctx
 	t_quote_type	quote_type;
 }	t_expand_ctx;
 
-/*	Minishell */
+/*      Minishell      */
 void			init_mini_data(t_minishell *minishell, char **envp);
 void			init_minishell(t_minishell *minishell);
 
-/* Free */
+/*      Free      */
 void			free_minishell(t_minishell *minishell);
 void			free_loop(t_minishell *minishell);
 
-/*	Signal */
+/*      Signal      */
 void			setup_interactive_signals(void);
 void			setup_heredoc_signals(void);
 void			setup_default_signals(void);
@@ -139,7 +123,7 @@ void			sigquit_handler(int sig);
 void			sigint_handler(int sig);
 void			sigint_heredoc_handler(int sig);
 
-/* Builtins */
+/*      Builtins      */
 int				is_builtin(char *cmd);
 int				run_builtin(t_command *cmd, t_minishell *minishell);
 int				is_valid_key(const char *key);
@@ -154,7 +138,6 @@ char			*get_home_path(t_env *env_list);
 char			*get_oldpwd_path(t_env *env_list);
 void			print_cd_error(char *arg);
 int				cd_too_many_args(void);
-char			*get_cd_target(char *arg, t_minishell *minishell);
 void			print_env_sorted(t_env *env_list);
 int				split_key_value(char *arg, char **key, char **value);
 int				print_export_error(char *arg);
@@ -166,7 +149,7 @@ void			non_numeric_exit(char *arg, t_minishell *minishell);
 int				too_many_args_exit(void);
 void			normal_exit(char *arg, t_minishell *minishell);
 
-/*	Environments	*/
+/*      Environments      */
 t_env			*init_env_list(char **envp);
 char			*get_env_value(t_env *env_list, const char *key);
 void			set_env_value(t_env **env_list,
@@ -198,7 +181,7 @@ void			skip_whitespace(char *input, int *i);
 char			*get_combined_token(const char *input,
 					int *i, t_quote_type *quote_out);
 
-/*  Expander  */
+/*      Expander      */
 char			*ft_strjoin_free(char *s1, char *s2);
 void			expand_tokens(t_minishell *minishell,
 					t_token *token_list, t_env *env_list);
@@ -212,7 +195,7 @@ int				is_heredoc_delimiter(t_token *prev);
 int				expand_token_value(t_minishell *minishell,
 					t_token *cursor, t_env *env_list);
 
-/*  Parser  */
+/*      Parser      */
 t_command		*parse_command(t_minishell *minishell, t_token **tokens);
 t_command		*init_command(void);
 void			handle_pipe_recursively(t_minishell *minishell,
@@ -221,7 +204,7 @@ char			**list_to_array(t_list *args);
 int				add_arg_to_list(t_list **args, char *value);
 t_command		*init_command(void);
 
-/* Executor */
+/*      Executor      */
 char			*ft_strjoin_three(const char *s1,
 					const char *s2, const char *s3);
 void			free_split(char **split);

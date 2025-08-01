@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_list_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azorlutu <azorlutu@student.42istanbul      +#+  +:+       +#+        */
+/*   By: ekamar <ekamar@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 22:40:25 by azorlutu          #+#    #+#             */
-/*   Updated: 2025/07/01 22:40:26 by azorlutu         ###   ########.fr       */
+/*   Updated: 2025/08/01 20:44:34 by ekamar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ char	*get_env_value(t_env *env_list, const char *key)
 
 void	update_existing_key(t_env *node, const char *value)
 {
-	free(node->value);
+	if (value == NULL)
+		return ;
+	if (node->value)
+		free(node->value);
 	node->value = ft_strdup(value);
 }

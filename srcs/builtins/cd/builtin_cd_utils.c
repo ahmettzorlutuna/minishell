@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_cd_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azorlutu <azorlutu@student.42istanbul      +#+  +:+       +#+        */
+/*   By: ekamar <ekamar@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 23:32:36 by azorlutu          #+#    #+#             */
-/*   Updated: 2025/06/30 23:32:36 by azorlutu         ###   ########.fr       */
+/*   Updated: 2025/08/01 21:42:04 by ekamar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,24 +33,4 @@ int	cd_too_many_args(void)
 {
 	ft_putstr_fd("minishell: cd: too many arguments\n", 2);
 	return (1);
-}
-
-char	*get_cd_target(char *arg, t_minishell *minishell)
-{
-	char	*oldpwd;
-
-	if (!arg || !ft_strcmp(arg, "~"))
-		return (get_home_path(minishell->env_list));
-	else if (!ft_strcmp(arg, "-"))
-	{
-		oldpwd = get_oldpwd_path(minishell->env_list);
-		if (!oldpwd)
-		{
-			ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2);
-			return (NULL);
-		}
-		ft_putendl_fd(oldpwd, 1);
-		return (oldpwd);
-	}
-	return (arg);
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_export.c                                        :+:      :+:    :+:   */
+/*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azorlutu <azorlutu@student.42istanbul      +#+  +:+       +#+        */
+/*   By: ekamar <ekamar@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 16:33:57 by azorlutu          #+#    #+#             */
-/*   Updated: 2025/05/09 16:33:57 by azorlutu         ###   ########.fr       */
+/*   Updated: 2025/08/01 20:44:56 by ekamar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,11 @@ int	builtin_export(char **args, t_minishell *minishell)
 		value = NULL;
 		if (split_key_value(args[i], &key, &value) || !is_valid_key(key))
 		{
+			print_export_error(args[i]);
 			free(key);
 			free(value);
-			return (print_export_error(args[i]));
+			i++;
+			continue ;
 		}
 		set_env_and_update(minishell, key, value);
 		free(key);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azorlutu <azorlutu@student.42istanbul      +#+  +:+       +#+        */
+/*   By: ekamar <ekamar@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 23:30:52 by azorlutu          #+#    #+#             */
-/*   Updated: 2025/06/30 23:30:53 by azorlutu         ###   ########.fr       */
+/*   Updated: 2025/08/01 20:45:03 by ekamar           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,9 +82,6 @@ int	handle_no_args(t_minishell *minishell)
 
 void	set_env_and_update(t_minishell *minishell, char *key, char *value)
 {
-	if (value)
-		set_env_value(&minishell->env_list, key, value);
-	else
-		set_env_value(&minishell->env_list, key, "");
+	set_env_value(&minishell->env_list, key, value);
 	update_env_array(minishell);
 }

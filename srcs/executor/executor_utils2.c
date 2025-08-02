@@ -19,8 +19,6 @@ int	empty_or_null_command(t_command *cmd, t_minishell *minishell)
 	if (!cmd || !minishell->tokens)
 	{
 		minishell->last_exit_code = 2;
-		if (!minishell->tokens)
-			ft_putstr_fd("minishell: quote syntax error\n", 2);
 		if (!cmd)
 		{
 			ft_putstr_fd("minishell: syntax error", 2);

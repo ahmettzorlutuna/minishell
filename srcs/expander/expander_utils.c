@@ -59,6 +59,14 @@ int	expand_token_value(
 		cursor->value = NULL;
 		return (1);
 	}
+	if (expanded_word[0] == '\0' && cursor->quote == NO_QUOTE)
+	{
+		free(expanded_word);
+		free(cursor->value);
+		cursor->value = NULL;
+		cursor->type = TOKEN_REMOVED;
+		return (0);
+	}
 	free(cursor->value);
 	cursor->value = expanded_word;
 	return (0);

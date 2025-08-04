@@ -107,12 +107,6 @@ void	expand_tokens(t_minishell *minishell,
 			cursor = cursor->next;
 			continue ;
 		}
-		if (cursor->type == TOKEN_WORD && cursor->quote != SINGLE_QUOTE)
-		{
-			if (expand_token_value(minishell, cursor, env_list))
-				return ;
-		}
-		prev = cursor;
-		cursor = cursor->next;
+		process_token_expansion(minishell, &prev, &cursor, env_list);
 	}
 }

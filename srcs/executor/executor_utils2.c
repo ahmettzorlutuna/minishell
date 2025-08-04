@@ -12,33 +12,6 @@
 
 #include "../includes/minishell.h"
 
-int	empty_or_null_command(t_command *cmd, t_minishell *minishell)
-{
-	if (is_only_operator_syntax_error(minishell))
-		return (1);
-	if (!cmd || !minishell->tokens)
-	{
-		minishell->last_exit_code = 2;
-		if (!cmd)
-		{
-			ft_putstr_fd("minishell: syntax error", 2);
-			ft_putstr_fd(" near unexpected token `newline'\n", 2);
-		}
-		return (1);
-	}
-	if ((!cmd->args || !cmd->args[0] || cmd->args[0][0] == '\0')
-					&& (ft_strcmp(minishell->tokens->value, "<<") != 0))
-	{
-		if (is_quoted_empty_command_error(cmd, minishell))
-			return (1);
-		if (handle_redirect_only_command(cmd, minishell))
-			return (1);
-		minishell->last_exit_code = 0;
-		return (1);
-	}
-	return (0);
-}
-
 int	run_parent_builtin_if_needed(t_command *cmd, t_minishell *minishell)
 {
 	int	in_bak;
@@ -64,19 +37,6 @@ int	run_parent_builtin_if_needed(t_command *cmd, t_minishell *minishell)
 		return (restore_fds_and_return(in_bak, out_bak, 1, minishell));
 	}
 	return (0);
-}
-
-static	int	get_pipe_count(t_command *cmd)
-{
-	int	count;
-
-	count = 0;
-	while (cmd)
-	{
-		count++;
-		cmd = cmd->next_pipe;
-	}
-	return (count);
 }
 
 int	run_pipeline_commands(t_command *cmd, t_minishell *minishell,

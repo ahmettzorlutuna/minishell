@@ -42,11 +42,13 @@ SRC	=	builtins/utils/builtin_utils.c \
 		executor/executor_utils2.c \
 		executor/executor_utils.c \
 		executor/executor.c \
+		executor/handle_null_commands.c \
 		executor/heredoc.c \
 		executor/heredoc_loop.c \
 		executor/heredoc_utils.c \
 		executor/redirection.c \
 		expander/expander.c \
+		expander/expander_utils2.c \
 		expander/expander_utils.c \
 		tokenizer/free_tokenizer.c \
 		tokenizer/get_combined_token.c \
@@ -113,5 +115,8 @@ fclean: clean
 	make -C $(LIBFT_PATH) fclean
 
 re: fclean all
+
+v:
+	valgrind --show-leak-kinds=all --leak-check=full --suppressions=readline.supp ./minishell
 
 .PHONY: all re clean fclean

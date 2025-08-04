@@ -31,9 +31,6 @@
 
 extern int	g_signal_flag;
 
-# define FREE_ARG 1
-# define NO_FREE  0
-# define MAX_PIDS 1024
 # define PATH_MAX 4096
 
 typedef enum e_token_type
@@ -44,6 +41,7 @@ typedef enum e_token_type
 	TOKEN_HEREDOC,
 	TOKEN_APPEND,
 	TOKEN_PIPE,
+	TOKEN_REMOVED,
 	TOKEN_EOF
 }	t_token_type;
 
@@ -194,6 +192,8 @@ char			*expand_word(t_minishell *minishell,
 int				is_heredoc_delimiter(t_token *prev);
 int				expand_token_value(t_minishell *minishell,
 					t_token *cursor, t_env *env_list);
+void			process_token_expansion(t_minishell *minishell,
+					t_token **prev, t_token **cursor, t_env *env_list);
 
 /*      Parser      */
 t_command		*parse_command(t_minishell *minishell, t_token **tokens);
@@ -247,5 +247,6 @@ int				handle_parent_process(int prev_fd,
 					int pipe_fd[2], t_command *cmd);
 void			setup_child_processes(t_command *cmd,
 					int prev_fd, int pipe_fd[2], t_minishell *minishell);
+int				get_pipe_count(t_command *cmd);
 
 #endif

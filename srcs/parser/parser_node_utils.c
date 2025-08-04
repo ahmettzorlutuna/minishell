@@ -38,7 +38,7 @@ int	add_arg_to_list(t_list **args, char *value)
 {
 	t_list	*new_node;
 
-	if (!value || !*value)
+	if (!value)
 		return (0);
 	new_node = ft_lstnew(ft_strdup(value));
 	if (!new_node)

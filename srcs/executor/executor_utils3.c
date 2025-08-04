@@ -71,3 +71,16 @@ char	*resolve_path(const char *cmd, t_env *env_list)
 		return (NULL);
 	return (search_in_paths(paths, cmd));
 }
+
+int	get_pipe_count(t_command *cmd)
+{
+	int	count;
+
+	count = 0;
+	while (cmd)
+	{
+		count++;
+		cmd = cmd->next_pipe;
+	}
+	return (count);
+}

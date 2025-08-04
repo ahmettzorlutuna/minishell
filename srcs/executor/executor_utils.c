@@ -42,6 +42,19 @@ char	*ft_strjoin_three(const char *s1, const char *s2, const char *s3)
 	return (full);
 }
 
+static void	handle_stat_errors(t_minishell *minishell, char *path)
+{
+	if (errno == ENOENT)
+		print_and_exit_free(minishell, path,
+			"No such file or directory", 127);
+	if (errno == EACCES)
+		print_and_exit_free(minishell, path,
+			"Permission denied", 126);
+	if (errno == ENOTDIR)
+		print_and_exit_free(minishell, path,
+			"Not a directory", 126);
+}
+
 static char	*get_executable_path(t_command *cmd,
 						t_minishell *minishell, struct stat *sb)
 {
@@ -56,14 +69,7 @@ static char	*get_executable_path(t_command *cmd,
 			"command not found", 127);
 	}
 	if (stat(path, sb) != 0)
-	{
-		if (errno == ENOENT)
-			print_and_exit_free(minishell, path,
-				"No such file or directory", 127);
-		if (errno == EACCES)
-			print_and_exit_free(minishell, path,
-				"Permission denied", 126);
-	}
+		handle_stat_errors(minishell, path);
 	if (S_ISDIR(sb->st_mode))
 		print_and_exit_free(minishell, path, "Is a directory", 126);
 	if (access(path, X_OK) != 0)
